@@ -53,39 +53,42 @@
             color: #b45f2b;
         }
 
-        /* 右上角按钮 */
+        /* 右上角按钮 - 调大尺寸 */
         .author-btn {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background: rgba(20, 22, 30, 0.7);
+            background: rgba(20, 22, 30, 0.85);
             backdrop-filter: blur(4px);
-            border: 1px solid #3a3f4e;
-            color: #cac7b6;
+            border: 1px solid #5a5f6e;
+            color: #ece8cf;
             font-family: inherit;
-            font-size: 0.7rem;
-            padding: 0.3rem 0.7rem;
-            border-radius: 20px;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 28px;
             cursor: pointer;
             transition: all 0.2s ease;
             z-index: 10;
-            letter-spacing: 0.3px;
-            font-weight: 400;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
         .author-btn:hover {
-            background: rgba(60, 65, 80, 0.8);
-            border-color: #b7a35c;
-            color: #ede8c4;
+            background: rgba(80, 85, 100, 0.9);
+            border-color: #e0bc78;
+            color: #fff6e0;
+            transform: scale(1.02);
         }
         .mystery-container.light-mode .author-btn {
-            background: rgba(240, 235, 225, 0.8);
-            border-color: #cbc2b5;
-            color: #4c4238;
+            background: rgba(235, 225, 210, 0.9);
+            border-color: #bcae92;
+            color: #2f2a22;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
         .mystery-container.light-mode .author-btn:hover {
-            background: #e5dacb;
-            border-color: #b39b6e;
-            color: #2c241c;
+            background: #e8dcc8;
+            border-color: #a88758;
+            color: #1e1812;
         }
 
         .evidence-image {
@@ -277,11 +280,11 @@
             opacity: 1;
         }
         .author-card {
-            max-width: 480px;
+            max-width: 500px;
             width: 90%;
             background: #1a1c24;
             border: 1px solid #4a4f5e;
-            border-radius: 24px;
+            border-radius: 28px;
             padding: 1.8rem 1.8rem 1.6rem;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             font-family: monospace;
@@ -303,10 +306,21 @@
             letter-spacing: 1px;
         }
         .author-card p {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             line-height: 1.6;
             margin-bottom: 0.8rem;
             white-space: pre-line;
+        }
+        .author-card strong {
+            color: #e6b86e;
+            font-weight: 700;
+            background: rgba(0,0,0,0.1);
+            padding: 0 2px;
+            border-radius: 4px;
+        }
+        .mystery-container.light-mode .author-card strong {
+            color: #b45f2b;
+            background: rgba(0,0,0,0.05);
         }
         .author-card .close-author {
             position: absolute;
@@ -364,8 +378,8 @@
 <body>
 
 <div class="mystery-container">
-    <!-- 右上角作者按钮 -->
-    <button class="author-btn" id="authorBtn">作者的话</button>
+    <!-- 右上角按钮 - 文字已改为“作者的话 · 必读” -->
+    <button class="author-btn" id="authorBtn">作者的话 · 必读</button>
 
     <div class="evidence-image">
         <img src="kuaididan.jpg" alt="" onerror="this.style.opacity='0.7'; this.style.filter='grayscale(0.6)';">
@@ -398,11 +412,12 @@
     </div>
 </div>
 
-<!-- 作者的话模态框 -->
+<!-- 作者的话模态框 - 增加加粗醒目提示 -->
 <div id="authorModal" class="author-modal">
     <div class="author-card">
         <button class="close-author" id="closeAuthorModal">&times;</button>
         <h3>作者的话</h3>
+        <p><strong>⚠️ 本游戏不需要浏览器搜索关键词，不要浪费时间搜索！！！</strong></p>
         <p>Tips：本游戏不需要浏览器搜索栏<br>
         某些地方需要鼠标选中不放按ctrl+c <br>
         推荐电脑游玩，手机应该会很麻烦</p>
