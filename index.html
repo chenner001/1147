@@ -53,11 +53,12 @@
             color: #b45f2b;
         }
 
-        /* 右上角按钮 - 调大尺寸 */
+        /* 作者按钮样式（居中，非绝对定位） */
+        .author-btn-wrapper {
+            text-align: center;
+            margin: 1rem 0 0.5rem;
+        }
         .author-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
             background: rgba(20, 22, 30, 0.85);
             backdrop-filter: blur(4px);
             border: 1px solid #5a5f6e;
@@ -68,10 +69,10 @@
             border-radius: 28px;
             cursor: pointer;
             transition: all 0.2s ease;
-            z-index: 10;
             letter-spacing: 0.5px;
             font-weight: 500;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            display: inline-block;
         }
         .author-btn:hover {
             background: rgba(80, 85, 100, 0.9);
@@ -93,7 +94,7 @@
 
         .evidence-image {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             border-radius: 20px;
             overflow: hidden;
             background: #07090e;
@@ -378,11 +379,13 @@
 <body>
 
 <div class="mystery-container">
-    <!-- 右上角按钮 - 文字已改为“作者的话 · 必读” -->
-    <button class="author-btn" id="authorBtn">作者的话 · 必读</button>
-
     <div class="evidence-image">
         <img src="kuaididan.jpg" alt="" onerror="this.style.opacity='0.7'; this.style.filter='grayscale(0.6)';">
+    </div>
+
+    <!-- 作者按钮移到图片下方，居中 -->
+    <div class="author-btn-wrapper">
+        <button class="author-btn" id="authorBtn">作者的话 · 必读</button>
     </div>
 
     <div class="story-text">
@@ -412,7 +415,7 @@
     </div>
 </div>
 
-<!-- 作者的话模态框 - 增加加粗醒目提示 -->
+<!-- 作者的话模态框 - 增加第6条 -->
 <div id="authorModal" class="author-modal">
     <div class="author-card">
         <button class="close-author" id="closeAuthorModal">&times;</button>
@@ -425,7 +428,8 @@
         2.这是我做的第二个游戏，还有很多不足<br>
         3.感谢各位老师和朋友的测评<br>
         4.有任何问题或者建议可以小红书联系我@Romonosovp<br>
-        5.本来这个故事想做上下两部的 待定</p>
+        5.本来这个故事想做上下两部的 待定<br>
+        6.游戏时长约20-30分钟。</p>
     </div>
 </div>
 
