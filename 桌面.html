@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Windows 桌面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: text;
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+        }
+
+        .desktop {
+            width: 100vw;
+            height: 100vh;
+            background: url("b9f4deb38f92d5fafabf5cde532486421.jpg") no-repeat center/cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 桌面图标容器 */
+        .desktop-icon {
+            width: 80px;
+            text-align: center;
+            position: absolute;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+        .desktop-icon:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .desktop-icon .name {
+            color: white;
+            font-size: 12px;
+            margin-top: 6px;
+            text-shadow: 0 1px 2px #000;
+            line-height: 1.3;
+            word-break: break-all;
+        }
+
+        /* ==================== Windows 经典CSS图标 ==================== */
+        /* 浏览器图标 */
+        .icon-browser {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto;
+            background: #0078D7;
+            border-radius: 4px;
+            position: relative;
+        }
+        .icon-browser::after {
+            content: "e";
+            position: absolute;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 文件夹图标 */
+        .icon-folder {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto;
+            background: #FFD700;
+            border-radius: 4px;
+            position: relative;
+        }
+        .icon-folder::before {
+            content: "";
+            position: absolute;
+            top: -8px;
+            left: 0;
+            width: 20px;
+            height: 8px;
+            background: #E6C200;
+            border-top-left-radius: 4px;
+        }
+
+        /* 便签图标 */
+        .icon-note {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto;
+            background: #FFFFE0;
+            border: 1px solid #ccc;
+            transform: rotate(-5deg);
+        }
+
+        /* 文本文档图标 */
+        .icon-txt {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        .icon-txt::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 28px;
+            height: 3px;
+            background: #666;
+            box-shadow: 0 8px #666, 0 16px #666;
+        }
+
+        /* 程序通用图标 */
+        .icon-app {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto;
+            background: #4CAF50;
+            border-radius: 8px;
+        }
+
+        /* 遮罩层（点击空白关闭所有窗口） */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        /* 密码弹窗 */
+        .pwd-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+        }
+        .pwd-header {
+            background: #0078d7;
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        .pwd-body {
+            padding: 20px;
+        }
+        .pwd-body input {
+            width: 100%;
+            padding: 7px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+        .pwd-btn {
+            padding: 7px 22px;
+            background: #0078d7;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .tip {
+            font-size: 12px;
+            color: #e81123;
+            display: none;
+            margin-bottom: 8px;
+        }
+
+        /* 提示弹窗 */
+        .sanctum-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 360px;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            padding: 22px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* 便签（自动换行，不溢出） */
+        .note-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 260px;
+            background: #ffffe0;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+        .note-content {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* 记事本 */
+        .notepad-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 400px;
+            background: white;
+            border: 1px solid #888;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+        }
+        .notepad-header {
+            height: 32px;
+            background: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 14px;
+        }
+        .notepad-body {
+            padding: 12px;
+            font-family: "Consolas", monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        /* 图片预览（极简模式，直接显示） */
+        .img-preview {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .img-preview img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        /* 任务栏 */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+        .start-btn {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+        }
+        .start-menu {
+            position: fixed;
+            bottom: 48px;
+            left: 0;
+            width: 240px;
+            height: 600px;
+            background: #1a1a1a;
+            display: none;
+            z-index: 101;
+            padding: 12px;
+        }
+        .start-menu-item {
+            color: white;
+            padding: 12px;
+            font-size: 14px;
+        }
+        .path-input {
+            margin-left: 20px;
+            padding: 7px 12px;
+            width: 320px;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: white;
+            outline: none;
+        }
+
+        /* 任务栏时间 */
+        .taskbar-time {
+            margin-left: auto;
+            color: #fff;
+            font-size: 12px;
+            padding-right: 15px;
+            user-select: none;
+        }
+
+        /* Lumen 提示 */
+        #lumen {
+            position: fixed;
+            bottom: 55px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #0078d7;
+            color: white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: flash 1s infinite;
+            cursor: pointer;
+            z-index: 400;
+            font-size: 12px;
+        }
+        @keyframes flash {
+            0%{opacity:1}50%{opacity:0.3}100%{opacity:1}
+        }
+
+        /* 聊天窗口 */
+        .chat-box {
+            position: fixed;
+            bottom: 48px;
+            right: 10px;
+            width: 340px;
+            background: #1a1a1a;
+            color: white;
+            border: 1px solid #444;
+            display: none;
+            z-index: 500;
+        }
+        .chat-header {
+            padding: 10px;
+            background: #0078d7;
+            font-size: 14px;
+        }
+        .chat-content {
+            height: 280px;
+            padding: 12px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .chat-options {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .chat-option {
+            padding: 7px;
+            background: #333;
+            border: none;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .chat-option.active {
+            background: #0078d7;
+        }
+
+        /* 卡片弹窗 */
+        .card-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 360px;
+            background: white;
+            padding: 22px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+<div class="desktop">
+    <!-- Windows 经典系统图标 -->
+    <div class="desktop-icon" style="top:30px;left:30px;" id="browser">
+        <div class="icon-browser"></div>
+        <div class="name">浏览器</div>
+    </div>
+    <div class="desktop-icon" style="top:30px;left:130px;" id="sanctum">
+        <div class="icon-folder"></div>
+        <div class="name">Sanctum</div>
+    </div>
+    <div class="desktop-icon" style="top:30px;left:230px;" id="note">
+        <div class="icon-note"></div>
+        <div class="name">便签</div>
+    </div>
+    <div class="desktop-icon" style="top:30px;left:330px;" id="notepad">
+        <div class="icon-txt"></div>
+        <div class="name">笔记.txt</div>
+    </div>
+    
+    <!-- 图片图标 -->
+    <div class="desktop-icon" style="top:150px;left:30px;" id="img1">
+        <img src="590B5A29BB339D2880CDB1CBAB98F6ED1.jpg" style="width:48px;height:48px;object-fit:cover;">
+        <div class="name">图片.jpg</div>
+    </div>
+    <!-- 快递单：kuaididan1.jpg 无悬停提示 -->
+    <div class="desktop-icon" style="top:150px;left:130px;" id="img2">
+        <img src="kuaididan1.jpg" style="width:48px;height:48px;object-fit:cover;">
+        <div class="name">kuaididan1.jpg</div>
+    </div>
+
+    <!-- 解锁后图标 -->
+    <div class="desktop-icon" style="top:270px;left:30px;display:none;" id="dawn">
+        <div class="icon-app"></div>
+        <div class="name">破晓之光</div>
+    </div>
+    <div class="desktop-icon" style="top:270px;left:130px;display:none;" id="ember">
+        <div class="icon-txt"></div>
+        <div class="name">余烬</div>
+    </div>
+    <div class="desktop-icon" style="top:270px;left:30px;display:none;" id="night">
+        <div class="icon-app"></div>
+        <div class="name">暗夜折翼</div>
+    </div>
+    <div class="desktop-icon" style="top:270px;left:130px;display:none;" id="scar">
+        <div class="icon-txt"></div>
+        <div class="name">伤痕</div>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div class="modal-overlay" id="overlay"></div>
+
+    <!-- 密码弹窗 -->
+    <div class="pwd-modal" id="pwdModal">
+        <div class="pwd-header">请输入密码</div>
+        <div class="pwd-body">
+            <input type="password" id="pwd" placeholder="输入密码">
+            <div class="tip" id="pwdTip">密码错误</div>
+            <button class="pwd-btn" id="confirmPwd">确定</button>
+        </div>
+    </div>
+
+    <!-- 提示窗口 -->
+    <div class="sanctum-modal" id="sanctumModal">
+        不可直接打开，请在开始处终端输入路径
+    </div>
+
+    <!-- 便签 -->
+    <div class="note-modal" id="noteModal">
+        <div class="note-content">
+QzpcVXNlcnNcTGluWGluZ0xhbmdcRG9jdW1lbnRzXFNhbmN0dW0=
+看起来是一串Base64密文
+        </div>
+    </div>
+
+    <!-- 记事本 -->
+    <div class="notepad-modal" id="notepadModal">
+        <div class="notepad-header">笔记.txt - 记事本</div>
+        <div class="notepad-body">
+2026.3.26
+他们用“ΛΧ”作为行动代号。快递单是个诱饵，但我必须去索菲亚旧圣殿教堂一探究竟。浏览器的密码我藏在了快递单上。
+        </div>
+    </div>
+
+    <!-- 极简图片预览 -->
+    <div class="img-preview" id="imgPreview">
+        <img id="previewImg" src="">
+    </div>
+
+    <!-- 任务栏 -->
+    <div class="taskbar">
+        <div class="start-btn" id="startBtn">开始</div>
+        <input type="text" class="path-input" placeholder="在此输入路径" id="pathInput">
+        <div class="taskbar-time" id="taskbarTime">2026/3/29 23:50</div>
+    </div>
+
+    <!-- 开始菜单 -->
+    <div class="start-menu" id="startMenu">
+        <div class="start-menu-item">功能不可用</div>
+        <div class="start-menu-item">功能不可用</div>
+        <div class="start-menu-item">功能不可用</div>
+    </div>
+
+    <!-- Lumen 消息 -->
+    <div id="lumen">Lumen</div>
+
+    <!-- 聊天窗口 -->
+    <div class="chat-box" id="chatBox">
+        <div class="chat-header">Lumen</div>
+        <div class="chat-content" id="chatContent"></div>
+        <div class="chat-options">
+            <button class="chat-option" data-val="vienna">维也纳</button>
+            <button class="chat-option active" data-val="cairo">开罗</button>
+            <button class="chat-option" data-val="budapest">布达佩斯</button>
+            <button class="chat-option" data-val="sofia">索菲亚教堂地下</button>
+            <button class="chat-option" data-val="prague">布拉格</button>
+        </div>
+    </div>
+
+    <!-- 卡片弹窗 -->
+    <div class="card-modal" id="cardModal">
+        <div id="cardText"></div>
+    </div>
+</div>
+
+<script>
+    const overlay = document.getElementById('overlay');
+    const lumenTip = document.getElementById('lumen');
+    const chatBox = document.getElementById('chatBox');
+    const chatContent = document.getElementById('chatContent');
+
+    // 自定义起始时间：2026-03-29 23:50:00
+    let customTime = new Date(2026, 2, 29, 23, 50, 0);
+
+    // 任务栏时间：从指定时间开始自动走秒
+    function updateTime() {
+        customTime.setSeconds(customTime.getSeconds() + 1);
+        const year = customTime.getFullYear();
+        const month = customTime.getMonth() + 1;
+        const day = customTime.getDate();
+        const h = String(customTime.getHours()).padStart(2, '0');
+        const m = String(customTime.getMinutes()).padStart(2, '0');
+        const s = String(customTime.getSeconds()).padStart(2, '0');
+        document.getElementById('taskbarTime').innerText = `${year}/${month}/${day} ${h}:${m}:${s}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 点击空白关闭所有窗口
+    function closeAllModals() {
+        overlay.style.display = 'none';
+        document.getElementById('pwdModal').style.display = 'none';
+        document.getElementById('sanctumModal').style.display = 'none';
+        document.getElementById('noteModal').style.display = 'none';
+        document.getElementById('notepadModal').style.display = 'none';
+        document.getElementById('imgPreview').style.display = 'none';
+        document.getElementById('cardModal').style.display = 'none';
+    }
+    overlay.onclick = closeAllModals;
+
+    // 浏览器密码
+    document.getElementById('browser').onclick = () => {
+        closeAllModals();
+        overlay.style.display = 'block';
+        document.getElementById('pwdModal').style.display = 'block';
+        document.getElementById('pwdTip').style.display = 'none';
+    };
+    document.getElementById('confirmPwd').onclick = () => {
+        const pwd = document.getElementById('pwd').value.trim();
+        pwd === '785214' ? (window.open('浏览器.html','_blank'), closeAllModals()) : (document.getElementById('pwdTip').style.display='block');
+    };
+
+    // 图标交互
+    document.getElementById('sanctum').onclick = ()=>{closeAllModals();overlay.style.display='block';document.getElementById('sanctumModal').style.display='block';}
+    document.getElementById('note').onclick = ()=>{closeAllModals();overlay.style.display='block';document.getElementById('noteModal').style.display='block';}
+    document.getElementById('notepad').onclick = ()=>{closeAllModals();overlay.style.display='block';document.getElementById('notepadModal').style.display='block';}
+    
+    // 图片直接预览
+    document.getElementById('img1').onclick = ()=>{
+        closeAllModals();
+        document.getElementById('previewImg').src='590B5A29BB339D2880CDB1CBAB98F6ED1.jpg';
+        document.getElementById('imgPreview').style.display='flex';
+    }
+    document.getElementById('img2').onclick = ()=>{
+        closeAllModals();
+        document.getElementById('previewImg').src='kuaididan1.jpg';
+        document.getElementById('imgPreview').style.display='flex';
+    }
+    document.getElementById('imgPreview').onclick = closeAllModals;
+
+    // 开始菜单
+    document.getElementById('startBtn').onclick = (e)=>{e.stopPropagation();const menu=document.getElementById('startMenu');menu.style.display=menu.style.display==='block'?'none':'block';}
+    document.onclick = ()=>{document.getElementById('startMenu').style.display='none';}
+
+    // 路径输入
+    document.getElementById('pathInput').onkeydown = (e)=>{
+        if(e.key==='Enter'){
+            const v=document.getElementById('pathInput').value.trim();
+            if(v==='C:\\Users\\LinXingLang\\Documents\\Sanctum') window.open('教堂档案管理系统.html','_blank');
+            if(v==='C:\\Users\\LinXingLang\\Desktop\\Tor Browser') window.open('tor.html','_blank');
+        }
+    }
+
+    // 密码检测
+    window.addEventListener('message', (e) => {
+        if(e.data === '122124'){
+            lumenTip.style.display = 'flex';
+        }
+    });
+
+    // 聊天功能
+    lumenTip.onclick = () => {
+        lumenTip.style.display = 'none';
+        chatBox.style.display = 'block';
+        chatContent.innerHTML = '';
+        const msgs = [
+            '情报都齐了。但有一件事我必须确认——孩子LUX-009到底被转移到了哪里？',
+            '我之前收到的内部消息说可能去了维也纳，但你在档案里找到的转移指令好像并不是这里。',
+            '我需要你给出确切的位置，否则我无法制定行动方案。',
+            '请回复：孩子藏在哪里？'
+        ];
+        let i=0;
+        function send(){if(i>=msgs.length)return;chatContent.innerHTML+=msgs[i]+'<br><br>';chatContent.scrollTop=chatContent.scrollHeight;i++;setTimeout(send,1200);}
+        send();
+    };
+
+    // 聊天选项
+    document.querySelectorAll('.chat-option').forEach(btn=>{
+        btn.onclick=()=>{
+            const v=btn.dataset.val;
+            document.querySelector('.chat-options').innerHTML='';
+            if(v==='sofia'){
+                chatContent.innerHTML+='确认了。和我想的一样。我今晚就行动。<br>';
+                setTimeout(()=>{chatBox.style.display='none';document.getElementById('dawn').style.display='block';document.getElementById('ember').style.display='block';},800);
+            }else{
+                chatContent.innerHTML+='你确定？我收到的消息和档案记录不一致……但我相信你。<br>';
+                setTimeout(()=>{chatBox.style.display='none';document.getElementById('night').style.display='block';document.getElementById('scar').style.display='block';},2000);
+            }
+        }
+    });
+
+    // 解锁功能
+    document.getElementById('dawn').onclick=()=>window.open('破晓之光.html','_blank');
+    document.getElementById('night').onclick=()=>window.open('暗夜折翼.html','_blank');
+    document.getElementById('ember').onclick=()=>{closeAllModals();overlay.style.display='block';document.getElementById('cardModal').style.display='block';document.getElementById('cardText').innerHTML='- 行动全程录像<br>- 大祭司指纹模板备份<br>- 一份完整的执事通讯记录';}
+    document.getElementById('scar').onclick=()=>{closeAllModals();overlay.style.display='block';document.getElementById('cardModal').style.display='block';document.getElementById('cardText').innerHTML='- 最后几秒的监控截图<br>- 一份残缺的执事档案';}
+</script>
+</body>
+</html>

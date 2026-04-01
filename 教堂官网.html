@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>索菲亚大教堂 | 圣殿骑士团遗址</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: #f6f4ef;
+            color: #2c2a27;
+            line-height: 1.5;
+        }
+
+        .site-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.02);
+        }
+
+        /* 顶部导航 */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 1.8rem 2rem 1.2rem;
+            border-bottom: 1px solid #e0d8ce;
+            flex-wrap: wrap;
+        }
+        .brand {
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+        }
+        .cross {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #8b6f42;
+            line-height: 1;
+        }
+        .brand h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #4f3e2c;
+        }
+        .brand p {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: #9b8c74;
+            margin-top: 2px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #5b4c3a;
+            transition: color 0.2s;
+            padding-bottom: 4px;
+            border-bottom: 1px solid transparent;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: #a6743c;
+            border-bottom-color: #a6743c;
+        }
+
+        /* 英雄区 */
+        .hero {
+            background: linear-gradient(rgba(40, 35, 30, 0.3), rgba(30, 25, 20, 0.45)), 
+                        url('https://images.pexels.com/photos/2570062/pexels-photo-2570062.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;
+            height: 460px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        .hero-text {
+            max-width: 760px;
+            padding: 0 20px;
+        }
+        .hero-text h2 {
+            font-size: 3rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+        }
+        .hero-text p {
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* 内容区 */
+        .content-area {
+            padding: 2.5rem 2rem 3rem;
+        }
+
+        /* 标签栏 */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            border-bottom: 1px solid #e2d9cf;
+            margin-bottom: 2.8rem;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.6rem 0.2rem;
+            cursor: pointer;
+            color: #6a604f;
+            transition: 0.2s;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            position: relative;
+        }
+        .tab-btn:hover {
+            color: #9f6e3e;
+        }
+        .tab-btn.active {
+            color: #9f6e3e;
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #9f6e3e;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fade 0.25s ease;
+        }
+        .tab-pane.active-pane {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* 历史与参观样式 */
+        .history-section, .visit-section {
+            max-width: 880px;
+            margin: 0 auto;
+        }
+        .history-block {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid #ece3d9;
+            padding-bottom: 1.5rem;
+        }
+        .history-block:last-child {
+            border-bottom: none;
+        }
+        .history-block h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #4f3e2c;
+            margin-bottom: 0.8rem;
+        }
+        .history-block p {
+            color: #4f4a42;
+            line-height: 1.6;
+        }
+
+        .info-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+        .info-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #ede6db;
+            display: flex;
+            gap: 1rem;
+        }
+        .info-label {
+            font-weight: 500;
+            width: 100px;
+            color: #7f684c;
+        }
+        .info-desc {
+            color: #4f4a42;
+            flex: 1;
+        }
+        .note {
+            margin-top: 2rem;
+            background: #faf7f2;
+            padding: 1rem 1.2rem;
+            border-left: 2px solid #bc9a6b;
+            color: #6c604e;
+            font-size: 0.9rem;
+        }
+
+        /* 数字馆藏列表 */
+        .digital-collection {
+            max-width: 800px;
+            margin: 1rem auto;
+        }
+        .book-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e6dfd2;
+        }
+        .book-info {
+            flex: 1;
+        }
+        .book-title {
+            font-weight: 500;
+            font-size: 1.05rem;
+            color: #4d3d2c;
+        }
+        .book-author {
+            font-size: 0.8rem;
+            color: #8c7b64;
+            margin-top: 4px;
+        }
+        .book-btn {
+            background: none;
+            border: 1px solid #cfc3b2;
+            padding: 0.3rem 1.2rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: inherit;
+            color: #6a5a48;
+            transition: 0.2s;
+            border-radius: 0;
+        }
+        .book-btn.active-book {
+            background: #a6743c;
+            border-color: #a6743c;
+            color: white;
+        }
+        .book-btn.disabled {
+            background: #f4efe8;
+            color: #c7bbaa;
+            border-color: #e2d8cd;
+            cursor: default;
+        }
+
+        /* 艺术品区域 — 画廊 */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+        .art-card {
+            flex: 0 0 280px;
+            text-align: center;
+        }
+        .art-image-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background: #e2d8cc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .art-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+        /* 光照canvas层 */
+        .light-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            pointer-events: auto;
+            z-index: 2;
+        }
+        /* 密钥提示层：居中，白色小字，无背景，无emoji */
+        .key-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.85rem;
+            font-family: 'Inter', monospace;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 4px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,0.5);
+            background: transparent;
+            backdrop-filter: none;
+            padding: 0;
+            border-radius: 0;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            border-left: none;
+        }
+        /* 悬停时显示密钥文字 */
+        .art-image-container:hover .key-hint {
+            opacity: 1;
+        }
+        .art-title {
+            margin-top: 0.75rem;
+            font-weight: 500;
+            color: #5e4a34;
+            font-size: 1rem;
+        }
+        .art-desc {
+            font-size: 0.8rem;
+            color: #7f6e58;
+            margin-top: 0.25rem;
+        }
+
+        /* 实景图交互区块 - 图片缩小二分之一，居中 */
+        .real-scene-card {
+            margin-top: 2.8rem;
+            border-top: 1px solid #e2d7cb;
+            padding-top: 1.8rem;
+        }
+        .real-scene-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #4f3e2c;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .interactive-image-wrapper {
+            text-align: center;
+            background: #fdfaf5;
+            padding: 0.8rem;
+            border: 1px solid #e9dfd2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .interactive-img {
+            width: 50%;           /* 缩小为父容器宽度的一半 */
+            height: auto;
+            display: block;
+            margin: 0 auto;       /* 居中 */
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 模态框 (法典) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #fffcf7;
+            max-width: 780px;
+            width: 90%;
+            max-height: 80vh;
+            padding: 1.8rem 2rem;
+            overflow-y: auto;
+            border: 1px solid #ddd0be;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid #e5dacd;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1rem;
+        }
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #4f3c2a;
+        }
+        .close-modal {
+            font-size: 1.6rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+            color: #8f7b62;
+        }
+        .codex-pre {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            white-space: pre-wrap;
+            background: #faf6ef;
+            padding: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            border-left: 2px solid #bc9a6b;
+        }
+
+        /* 白色纸条弹窗 - 直角矩形，无尖角，无按钮，仅内容 */
+        .paper-tip-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+            backdrop-filter: blur(2px);
+        }
+        .paper-slip {
+            position: relative;
+            background: #fffef7;
+            max-width: 500px;
+            width: 85%;
+            padding: 1.8rem 2rem;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+            border-radius: 0;          /* 四角直角 */
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #2c2a27;
+            border: 1px solid #e2d3c0;
+        }
+        /* 移除所有伪尖角 */
+        .paper-slip::before,
+        .paper-slip::after {
+            display: none;
+        }
+        .paper-content {
+            line-height: 1.65;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+        .paper-code {
+            background: #f6f0e7;
+            padding: 0.9rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            border-left: 3px solid #b49264;
+            margin: 0;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        /* 删除按钮后，没有关闭按钮样式，只保留内容 */
+
+        footer {
+            background: #f1ede6;
+            text-align: center;
+            padding: 1.8rem;
+            font-size: 0.75rem;
+            color: #8e7d67;
+            border-top: 1px solid #e2d7cb;
+        }
+
+        @media (max-width: 720px) {
+            .top-bar { flex-direction: column; gap: 1rem; align-items: flex-start; padding: 1.2rem; }
+            .nav-links { gap: 1rem; }
+            .hero { height: 340px; }
+            .hero-text h2 { font-size: 2rem; }
+            .tabs { gap: 1rem; }
+            .info-list li { flex-direction: column; gap: 0.3rem; }
+            .info-label { width: auto; }
+            .gallery { gap: 1rem; }
+            .art-card { flex: 0 0 240px; }
+            .art-image-container { height: 170px; }
+            .key-hint { font-size: 0.7rem; white-space: nowrap; }
+            .paper-slip { padding: 1.2rem; }
+            .paper-code { font-size: 0.75rem; }
+            /* 小屏幕下图片宽度适当增大一点，但保持相对较小 */
+            .interactive-img { width: 70%; }
+            @media (max-width: 480px) {
+                .key-hint { white-space: normal; width: 90%; text-align: center; font-size: 0.65rem; }
+                .interactive-img { width: 85%; }
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="site-container">
+    <div class="top-bar">
+        <div class="brand">
+            <span class="cross">✝</span>
+            <div>
+                <h1>SOPHIA CATHEDRAL</h1>
+                <p>圣殿骑士团遗址 · 光启圣所</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="#" data-nav="history" class="active">历史</a>
+            <a href="#" data-nav="visit">参观</a>
+            <a href="#" data-nav="digital">数字馆藏</a>
+            <a href="#" data-nav="art">艺术品</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="hero-text">
+            <h2>光与真理的殿宇</h2>
+            <p>圣殿骑士团编年史 · 手稿与圣像</p>
+        </div>
+    </div>
+
+    <div class="content-area">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="history">历史</button>
+            <button class="tab-btn" data-tab="visit">参观</button>
+            <button class="tab-btn" data-tab="digital">数字馆藏</button>
+            <button class="tab-btn" data-tab="art">艺术品</button>
+        </div>
+
+        <!-- 历史面板 -->
+        <div id="history" class="tab-pane active-pane">
+            <div class="history-section">
+                <div class="history-block">
+                    <h3>圣殿骑士团根基</h3>
+                    <p>索菲亚大教堂始建于1130年，曾是英格兰地区圣殿骑士团的主要集会地。骑士团成员在此进行秘密议事、宣誓仪式，并保存大量中世纪文献。教堂石墙至今保留着骑士团的拉丁铭文与十字刻痕，见证八百余年信仰传承。</p>
+                </div>
+                <div class="history-block">
+                    <h3>缮写室与法典</h3>
+                    <p>12至14世纪，修道院缮写室抄录了《圣殿骑士团法典》及数百卷宗教典籍。1998年考古发掘于藏书室发现大量手稿，证实该教堂为骑士团知识传播中心。</p>
+                </div>
+                <div class="history-block">
+                    <h3>现代修复与传承</h3>
+                    <p>2001年完成整体修缮，保留哥特式肋拱与彩色玻璃窗。每年圣殿骑士纪念日，教堂会举办历史讲座与手稿特展，延续八百年的信仰与学术传统。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 参观面板 (实景图缩小并居中，无辅助文字) -->
+        <div id="visit" class="tab-pane">
+            <div class="visit-section">
+                <ul class="info-list">
+                    <li><span class="info-label">开放时间</span><span class="info-desc">周一至周六 9:30 – 17:00 (最后入场 16:30) &nbsp;|&nbsp; 周日 12:00 – 16:00</span></li>
+                    <li><span class="info-label">门票</span><span class="info-desc">成人 £9.50 &nbsp;|&nbsp; 学生/长者 £7.00 &nbsp;|&nbsp; 家庭套票 £24.00 (2大2小)</span></li>
+                    <li><span class="info-label">导览服务</span><span class="info-desc">每日英语/中文语音导览；修士讲解团需提前邮件预约 (groups@sophiacathedral.org)</span></li>
+                    <li><span class="info-label">地址</span><span class="info-desc">Cathedral Square, Coventry, CV1 5FB, United Kingdom</span></li>
+                    <li><span class="info-label">交通</span><span class="info-desc">火车至考文垂站，步行15分钟；巴士8/9/11路直达教堂广场</span></li>
+                </ul>
+                <div class="note">礼拜时间：主日崇拜 10:30 (游客请于礼拜结束后参观主殿)。教堂区域内请保持肃静，感谢您的尊重。</div>
+                
+                <!-- 实景图区块：图片缩小二分之一，居中 -->
+                <div class="real-scene-card">
+                    <div class="real-scene-title">教堂实景 · 晨钟</div>
+                    <div class="interactive-image-wrapper">
+                        <img id="quadrantImage" class="interactive-img" src="B58BB5FD9C1E1B0BAB29F5F4A8B29326.jpg" alt="索菲亚大教堂内殿实景图">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数字馆藏面板 -->
+        <div id="digital" class="tab-pane">
+            <div class="digital-collection" id="digitalLibrary"></div>
+            <div style="text-align: center; margin-top: 2rem; font-size: 0.8rem; color: #9e8f7a;">更多中世纪手稿正在数字化中，敬请期待。</div>
+        </div>
+
+        <!-- 艺术品面板 -->
+        <div id="art" class="tab-pane">
+            <div class="gallery">
+                <!-- 光的启示（第一位） -->
+                <div class="art-card" id="lightCard">
+                    <div class="art-image-container" id="lightContainer">
+                        <img class="art-image" src="light.jpg" alt="光的启示" id="lightImage">
+                        <canvas id="lightCanvas" class="light-canvas"></canvas>
+                        <div class="key-hint">档案系统密钥：LUX-0720-2023</div>
+                    </div>
+                    <div class="art-title">光的启示</div>
+                    <div class="art-desc">修士画作，1720年。勒阿弗尔港口在晨雾中日出时的景象</div>
+                </div>
+
+                <!-- 圣母与圣徒 -->
+                <div class="art-card">
+                    <div class="art-image-container">
+                        <img class="art-image" src="1_240424155026_1.jpg" alt="圣母与圣徒">
+                    </div>
+                    <div class="art-title">圣母与圣徒</div>
+                    <div class="art-desc">15世纪祭坛画，圣母怀抱圣婴，周围环绕圣殿骑士团守护圣徒</div>
+                </div>
+
+                <!-- 创造亚当 -->
+                <div class="art-card">
+                    <div class="art-image-container">
+                        <img class="art-image" src="5e57b8cd9e1772690abed3444e4c9255.jpg" alt="创造亚当">
+                    </div>
+                    <div class="art-title">创造亚当</div>
+                    <div class="art-desc">模仿米开朗基罗风格的壁画，上帝之手赋予亚当灵魂，象征神性与人性的交融</div>
+                </div>
+
+                <!-- 创世纪 -->
+                <div class="art-card">
+                    <div class="art-image-container">
+                        <img class="art-image" src="u=245343877,263377221&fm=30&app=106&f=JPEG.jpg" alt="创世纪">
+                    </div>
+                    <div class="art-title">创世纪</div>
+                    <div class="art-desc">根据《创世记》主题创作，描绘神分开光暗、创造天地万物的宏大场景</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>索菲亚大教堂遗产基金会 | 圣殿骑士团历史遗迹 | 数字馆藏由旧圣殿教堂档案馆支持</p>
+        <p style="margin-top: 0.5rem;">© 2026 Sophia Cathedral · 保留所有权利 · 光启密钥特展</p>
+    </footer>
+</div>
+
+<!-- 法典模态框 -->
+<div id="codexModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>圣殿骑士团法典</h3>
+            <span class="close-modal" id="closeModalBtn">&times;</span>
+        </div>
+        <div class="codex-pre">
+            <strong>Codex of the Knights Templar</strong><br>
+            拉丁文原版与英文译文节选<br><br>
+            ─────────────────<br>
+            条款1：凡入会者须宣誓保密，不得泄露团内事务。<br>
+            Article 1: All members shall swear an oath of secrecy and shall not disclose internal affairs.<br><br>
+            条款2：每周聚会一次，地点为指定教堂。<br>
+            Article 2: Gather once a week at the designated chapel.<br><br>
+            条款3：十字与光为兄弟会之象征。<br>
+            Article 3: The cross and the light are the symbols of the brotherhood.<br><br>
+            ...<br><br>
+            条款12：钥匙藏于光的背面。<br>
+            Article 12: The key is hidden behind the light.<br><br>
+            ...（以下为其他条款，略）<br><br>
+            ─────────────────<br>
+            本电子版由旧圣殿教堂数字馆藏提供。<br>
+            © 2024 Old Chapel Digital Archives
+        </div>
+    </div>
+</div>
+
+<!-- 白色纸条弹窗 (直角矩形，无按钮，仅内容，点击遮罩关闭) -->
+<div id="paperTipModal" class="paper-tip-modal">
+    <div class="paper-slip">
+        <div class="paper-content">
+            <div class="paper-code">
+                QzpcVXNlcnNcTGluWGluZ0xhbmdcRGVza3RvcFxUb3IgQnJvd3Nlcg== password：19881874
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- 数字馆藏书籍数据 ----------
+    const books = [
+        { title: "圣殿骑士团法典", author: "圣殿骑士团编撰, 12世纪", clickable: true },
+        { title: "索菲亚祷文集", author: "修道院缮写室, 15世纪", clickable: false },
+        { title: "考文垂彩绘诗篇", author: "佚名修士, 14世纪", clickable: false },
+        { title: "十字军东征书信集", author: "雷金纳德主教, 1187年", clickable: false },
+        { title: "教堂建造日志", author: "罗杰·德·莫尔, 1225年", clickable: false },
+        { title: "中世纪圣咏乐谱", author: "圣安德烈唱诗班, 16世纪", clickable: false }
+    ];
+
+    function renderLibrary() {
+        const container = document.getElementById('digitalLibrary');
+        if (!container) return;
+        container.innerHTML = '';
+        books.forEach(book => {
+            const row = document.createElement('div');
+            row.className = 'book-row';
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'book-info';
+            infoDiv.innerHTML = `<div class="book-title">${book.title}</div><div class="book-author">${book.author}</div>`;
+            const btn = document.createElement('button');
+            btn.className = 'book-btn';
+            btn.textContent = book.clickable ? '在线阅读' : '即将开放';
+            if (!book.clickable) {
+                btn.classList.add('disabled');
+                btn.disabled = true;
+            } else {
+                btn.classList.add('active-book');
+                btn.addEventListener('click', () => openModal());
+            }
+            row.appendChild(infoDiv);
+            row.appendChild(btn);
+            container.appendChild(row);
+        });
+    }
+
+    // 法典模态框控制
+    const modal = document.getElementById('codexModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    function openModal() { modal.style.display = 'flex'; }
+    function closeModalFunc() { modal.style.display = 'none'; }
+    closeModalBtn.addEventListener('click', closeModalFunc);
+    window.addEventListener('click', (e) => { if (e.target === modal) closeModalFunc(); });
+
+    // 标签页切换
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    function switchTab(tabId) {
+        panes.forEach(pane => pane.classList.remove('active-pane'));
+        const activePane = document.getElementById(tabId);
+        if (activePane) activePane.classList.add('active-pane');
+        tabBtns.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-tab') === tabId) btn.classList.add('active');
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-nav') === tabId) link.classList.add('active');
+        });
+    }
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+    });
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab(link.getAttribute('data-nav'));
+        });
+    });
+
+    // 光照效果：圆形羽化边缘手电筒效果
+    function initLightEffect() {
+        const container = document.getElementById('lightContainer');
+        const canvas = document.getElementById('lightCanvas');
+        const img = document.getElementById('lightImage');
+        if (!container || !canvas || !img) return;
+
+        function resizeCanvas() {
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            drawDarkMask();
+        }
+
+        function drawDarkMask() {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.82)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawSpotlight(x, y) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const radius = Math.min(canvas.width, canvas.height) * 0.5;
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+            gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            gradient.addColorStop(0.35, 'rgba(0, 0, 0, 0.15)');
+            gradient.addColorStop(0.65, 'rgba(0, 0, 0, 0.55)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.85)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function onMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let x = (e.clientX - rect.left) * scaleX;
+            let y = (e.clientY - rect.top) * scaleY;
+            x = Math.min(Math.max(0, x), canvas.width);
+            y = Math.min(Math.max(0, y), canvas.height);
+            drawSpotlight(x, y);
+        }
+
+        function onMouseLeave() {
+            drawDarkMask();
+        }
+
+        canvas.addEventListener('mousemove', onMouseMove);
+        canvas.addEventListener('mouseleave', onMouseLeave);
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            drawDarkMask();
+        });
+        resizeCanvas();
+        drawDarkMask();
+    }
+
+    // ---------- 象限解谜核心逻辑 (顺序: 左上->右下->右上->左下) ----------
+    const requiredSeq = ['nw', 'se', 'ne', 'sw'];
+    let currentStep = 0;
+    const quadrantImg = document.getElementById('quadrantImage');
+    const paperModal = document.getElementById('paperTipModal');
+
+    function getQuadrantFromClick(imgElement, clientX, clientY) {
+        const rect = imgElement.getBoundingClientRect();
+        const relativeX = (clientX - rect.left) / rect.width;
+        const relativeY = (clientY - rect.top) / rect.height;
+        if (relativeX < 0 || relativeX > 1 || relativeY < 0 || relativeY > 1) return null;
+        const isLeft = relativeX < 0.5;
+        const isTop = relativeY < 0.5;
+        if (isTop && isLeft) return 'nw';
+        if (isTop && !isLeft) return 'ne';
+        if (!isTop && isLeft) return 'sw';
+        if (!isTop && !isLeft) return 'se';
+        return null;
+    }
+
+    function resetSequence() {
+        currentStep = 0;
+    }
+
+    function showPaperTip() {
+        paperModal.style.display = 'flex';
+    }
+
+    function closePaperTip() {
+        paperModal.style.display = 'none';
+        resetSequence();
+    }
+
+    function handleQuadrantClick(e) {
+        let clientX, clientY;
+        if (e.touches) {
+            const touch = e.touches[0];
+            clientX = touch.clientX;
+            clientY = touch.clientY;
+            e.preventDefault();
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+        const quadrant = getQuadrantFromClick(quadrantImg, clientX, clientY);
+        if (!quadrant) return;
+
+        const expected = requiredSeq[currentStep];
+        if (quadrant === expected) {
+            currentStep++;
+            if (currentStep === requiredSeq.length) {
+                showPaperTip();
+                resetSequence();
+            }
+        } else {
+            resetSequence();
+        }
+    }
+
+    if (quadrantImg) {
+        quadrantImg.addEventListener('click', handleQuadrantClick);
+        quadrantImg.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (e.touches.length) {
+                const touch = e.touches[0];
+                handleQuadrantClick({ touches: [touch], clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} });
+            }
+        });
+    }
+
+    // 点击遮罩关闭纸条弹窗
+    paperModal.addEventListener('click', (e) => {
+        if (e.target === paperModal) closePaperTip();
+    });
+
+    window.addEventListener('load', () => {
+        renderLibrary();
+        initLightEffect();
+        switchTab('history');
+        resetSequence();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>索菲亚大教堂档案馆 | 档案管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            background-color: #f2efe8;
+            color: #2c2a27;
+            line-height: 1.5;
+        }
+
+        .hero {
+            width: 100%;
+            height: 480px;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)), 
+                        url('https://images.pexels.com/photos/2570062/pexels-photo-2570062.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 0;
+        }
+        .hero-caption {
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: #f5efe5;
+            font-weight: 300;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            padding: 0.5rem 1.8rem;
+            border-radius: 30px;
+            margin-bottom: 1.8rem;
+        }
+
+        .archive-container {
+            max-width: 1000px;
+            margin: 0 auto 3rem;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .archive-header {
+            padding: 2rem 2rem 0.5rem 2rem;
+            border-bottom: 1px solid #e9e2d8;
+        }
+        .archive-header h1 {
+            font-size: 1.6rem;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            color: #3a3128;
+        }
+        .archive-header p {
+            font-size: 0.8rem;
+            color: #9b8b78;
+            margin-top: 0.3rem;
+        }
+
+        .search-section {
+            padding: 1.5rem 2rem 1rem 2rem;
+        }
+        .search-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b28b5e;
+            margin-bottom: 0.75rem;
+        }
+        .search-box {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .search-input {
+            flex: 1;
+            padding: 0.9rem 1rem;
+            font-size: 0.95rem;
+            font-family: 'Inter', monospace;
+            background: #fefcf8;
+            border: 1px solid #e2d8ce;
+            border-radius: 12px;
+            transition: 0.2s;
+            outline: none;
+            color: #2c2a27;
+        }
+        .search-input:focus {
+            border-color: #b28b5e;
+            box-shadow: 0 0 0 3px rgba(178, 139, 94, 0.1);
+        }
+        .search-btn {
+            background: #3a3128;
+            border: none;
+            padding: 0 1.6rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
+        }
+        .search-btn:hover {
+            background: #5f4c38;
+        }
+        .hint-text {
+            font-size: 0.7rem;
+            color: #b8aa98;
+            margin-top: 0.8rem;
+        }
+
+        .info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 1rem 2rem 2rem 2rem;
+            border-bottom: 1px solid #efe8df;
+        }
+        .info-card {
+            flex: 1;
+            min-width: 200px;
+            background: #fefcf8;
+            border-radius: 16px;
+            padding: 1.2rem 1.2rem 1.2rem 1.2rem;
+            transition: all 0.2s;
+        }
+        .info-card h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #b28b5e;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            border-left: 2px solid #dccdb8;
+            padding-left: 0.7rem;
+        }
+        .info-card ul {
+            list-style: none;
+        }
+        .info-card li {
+            font-size: 0.85rem;
+            color: #5f5548;
+            margin-bottom: 0.65rem;
+            line-height: 1.4;
+            display: flex;
+            align-items: baseline;
+        }
+        .stat-number {
+            font-weight: 600;
+            color: #9b7a56;
+            margin-right: 0.3rem;
+        }
+
+        .info-note {
+            padding: 1.2rem 2rem;
+            background: #fefcf8;
+            font-size: 0.8rem;
+            color: #8f7f6a;
+            border-top: 1px solid #efe8df;
+            border-bottom: 1px solid #efe8df;
+        }
+        .info-note strong {
+            color: #7b623f;
+            font-weight: 500;
+        }
+
+        .archive-footer {
+            padding: 1rem 2rem;
+            font-size: 0.7rem;
+            text-align: center;
+            color: #b7a68e;
+            background: #ffffff;
+            border-top: 1px solid #efe8df;
+        }
+
+        /* 底部序列区块 */
+        .sequence-footer {
+            padding: 0.8rem 2rem 1rem 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            background: #faf7f0;
+            border-top: 1px solid #e9dfd2;
+            color: #7b6a53;
+        }
+        .sequence-footer .clickable-lux {
+            cursor: pointer;
+            font-weight: normal;
+            color: inherit;   /* 颜色无变化，继承父级 */
+        }
+
+        /* 通用模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        .modal.active {
+            display: flex;
+        }
+        .paper-document {
+            background: #fef6ea;
+            max-width: 680px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 16px;
+            position: relative;
+            padding: 2rem 2rem 2rem 2rem;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            border: 1px solid #e6d7c2;
+        }
+        .document-header {
+            text-align: center;
+            border-bottom: 1px solid #e0cfb6;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.6rem;
+        }
+        .document-header h2 {
+            font-size: 1.4rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: #5a4230;
+        }
+        .archive-ref {
+            font-family: monospace;
+            font-size: 0.75rem;
+            background: #f0e5d6;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            margin-top: 0.4rem;
+            color: #7c5e3c;
+            border-radius: 30px;
+        }
+        .record-field {
+            margin: 1rem 0;
+            border-left: 2px solid #dac29c;
+            padding-left: 1rem;
+        }
+        .field-label {
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b18b5c;
+            margin-bottom: 0.3rem;
+        }
+        .field-content {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #3e362e;
+        }
+        .ritual-text {
+            font-style: italic;
+            background: #fbf4e8;
+            padding: 0.8rem;
+            margin: 0.8rem 0;
+            border-radius: 8px;
+            color: #5a4a36;
+            font-size: 0.85rem;
+        }
+        .signature {
+            margin-top: 1.5rem;
+            text-align: right;
+            font-family: monospace;
+            border-top: 1px dashed #dfcfb6;
+            padding-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #9b876e;
+        }
+        .close-paper {
+            position: absolute;
+            top: 1rem;
+            right: 1.2rem;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #a58c6b;
+            transition: 0.2s;
+        }
+        .close-paper:hover {
+            color: #5a4230;
+        }
+
+        /* 自定义输入模态框样式 */
+        .input-modal-content {
+            background: #fef6ea;
+            max-width: 400px;
+            width: 90%;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            border: 1px solid #e6d7c2;
+        }
+        .input-modal-content p {
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            color: #5a4230;
+        }
+        .input-modal-content input {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            font-family: monospace;
+            border: 1px solid #dac29c;
+            border-radius: 8px;
+            background: #fffcf7;
+            margin-bottom: 1.2rem;
+            box-sizing: border-box;
+        }
+        .input-modal-content button {
+            background: #a6743c;
+            border: none;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .input-modal-content button:hover {
+            background: #8a5c34;
+        }
+        .input-modal-content .close-input {
+            background: transparent;
+            color: #7f6b54;
+            border: 1px solid #dac29c;
+            margin-left: 0.8rem;
+        }
+        .input-modal-content .close-input:hover {
+            background: #f0e5d6;
+            color: #5a4230;
+        }
+
+        @media (max-width: 700px) {
+            .hero { height: 300px; }
+            .archive-container { margin: 0 1rem 2rem; border-radius: 16px; }
+            .archive-header { padding: 1.2rem 1.2rem 0.2rem; }
+            .search-section { padding: 1rem 1.2rem; }
+            .info-grid { padding: 0.5rem 1.2rem 1.5rem; gap: 1rem; }
+            .info-card { padding: 1rem; }
+            .paper-document { padding: 1.2rem; }
+            .document-header h2 { font-size: 1.2rem; }
+            .sequence-footer { padding: 0.6rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-caption">索菲亚大教堂 · 圣殿骑士团档案馆</div>
+    </div>
+
+    <div class="archive-container">
+        <div class="archive-header">
+            <h1>教堂档案管理系统</h1>
+            <p>数字化密卷索引 · 中世纪手稿与圣殿骑士团文献</p>
+        </div>
+
+        <div class="search-section">
+            <div class="search-label">档案检索</div>
+            <div class="search-box">
+                <input type="text" class="search-input" id="archiveKeyInput" autocomplete="off">
+                <button class="search-btn" id="searchBtn">查阅档案</button>
+            </div>
+            <div class="hint-text">授权密钥格式：LUX-XXXX-XXXX</div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>近期动态</h3>
+                <ul>
+                    <li>· 2025年 密卷整理进度：第73卷骑士团财务簿已完成数字化</li>
+                    <li>· 新发现 14世纪羊皮信函 7 封，待编目入库</li>
+                    <li>· 档案馆春季特展：圣殿骑士团礼仪器物复刻展</li>
+                    <li>· 2026年开放申请查阅限制级档案 (需主教区许可)</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>馆藏统计</h3>
+                <ul>
+                    <li><span class="stat-number">312</span> 件羊皮手稿</li>
+                    <li><span class="stat-number">89</span> 件蜡封文书</li>
+                    <li><span class="stat-number">56</span> 卷仪式记录</li>
+                    <li><span class="stat-number">27</span> 册骑士团密卷 (限制级)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-note">
+            <strong>馆藏说明</strong> — 本系统收录圣殿骑士团及修道院自12世纪以来的密卷、仪式记录及圣物清单。输入正确的档案密钥可查阅对应编号的原始手稿影印本。
+        </div>
+
+        <!-- 底部序列区块：顺序 VITA · VERITAS · LUX · VIA，LUX可点击且颜色无变化 -->
+        <div class="sequence-footer">
+            VITA · VERITAS · <span class="clickable-lux" id="clickableLux">LUX</span> · VIA
+        </div>
+
+        <div class="archive-footer">
+            <span>索菲亚大教堂档案馆 · 数字化缮写室</span>
+        </div>
+    </div>
+
+    <!-- 模态框 1: 720号仪式记录 (密钥 LUX-0720-2023) -->
+    <div id="ritualModal" class="modal">
+        <div class="paper-document">
+            <button class="close-paper" id="closeRitualModalBtn">✕</button>
+            <div class="document-header">
+                <h2>仪式记录 · 密卷</h2>
+                <div class="archive-ref">档案编号：LUX-0720-2023</div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">仪式日期</div>
+                <div class="field-content">主历 2023年 9月 15日 · 圣十字架瞻礼后第三日</div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">档案编号</div>
+                <div class="field-content">第 720 号仪式记录 (Infans sacer)</div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">仪轨溯源</div>
+                <div class="field-content">
+                    据《圣殿骑士团法典》条款二十三载：教堂每日晨钟之序，循“光、道路、真理、生命”而鸣。即 LUX · VIA · VERITAS · VITA
+                </div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">仪式实录</div>
+                <div class="field-content">
+                    根据圣殿骑士团古代仪轨及索菲亚大教堂地下圣所档案记载，第720号记录涉及一名孩童，名为“以利亚撒”，年约七岁，由修道院隐修会从英格兰北部教区秘密遴选。
+                    <div class="ritual-text">
+                        “于子夜时分，七盏烛火环绕圣石台，大司祭以拉丁文诵读《光之启示录》第七章。孩童身着白麻衣，手持未燃尽的乳香枝，静立于祭坛前。其后行涂油礼，以圣油画十字于额心、手心与足心。祷词念毕，圣殿骑士团卫士将孩童引导至密室之井边。依照《骑士团法典》第十二章第三节，仪式参与者需自愿将自身交于圣光，成为永恒的献礼。是时，钟鸣七响，密室之门闭合，此后三日不得开启。”
+                    </div>
+                    据后续文书，仪式完成后，孩童化为“纯粹之光”，灵魂升入天界，肉身归于圣所石基之下，与历代圣徒遗骨共融。该仪式旨在为教堂抵御“黑暗侵蚀”并维系圣殿骑士团古老盟约。记录末尾附有当时大司祭西奥多·德·克莱蒙的拉丁文签名及骑士团封印。
+                </div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">见证人及封印</div>
+                <div class="field-content">
+                    大司祭：Theodorus de Claromonte<br>
+                    骑士团代表：Hugo de Payens (后裔)<br>
+                    缮写修士：Frater Anselmus<br>
+                    教会封印：圆形蜡封，刻有圣殿十字与钥匙图案。
+                </div>
+            </div>
+            <div class="signature">
+                Archivum Sanctae Sophiae · 此件为真迹数字复制品<br>
+                登记于：2023年10月2日 · 考文垂主教区
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 2: 事件记录 (密钥 LUX-1147-2026) -->
+    <div id="eventModal" class="modal">
+        <div class="paper-document">
+            <button class="close-paper" id="closeEventModalBtn">✕</button>
+            <div class="document-header">
+                <h2>事件记录 · 警戒密卷</h2>
+                <div class="archive-ref">档案编号：LUX-1147-2026</div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">事发时刻</div>
+                <div class="field-content">主历 2026年 3月 26日 · 丑时三刻（凌晨4时23分）</div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">地点</div>
+                <div class="field-content">圣光修道院地下二层 · 关押区及祭坛前厅</div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">事件纪要</div>
+                <div class="field-content">
+                    是日丑时三刻，地下二层声纹警报骤然鸣响。大祭司赫尔曼·冯·赖兴瑙自静修室传令，即刻启动应急程序。据守卫回报，一名入侵者（后确认为调查记者林星朗）绕过图书馆暗门及外围岗哨，潜入关押区，并以工具破坏铁笼锁具，试图带走祭品LUX-009。
+                    <div class="ritual-text">
+                        “大祭司亲启指纹锁冻结术，密室门扉瞬时锁闭，入侵者困于铁笼与祭坛之间，进退维谷。然其熟知排水渠暗道，趁守卫尚未合围之际，自暗门遁入沟渠，消失于夜色。”
+                    </div>
+                    祭祀仪式被迫中断。大祭司下令将祭品LUX-009即刻转移至备用据点（具体位置暂加密，仅限执事以上查阅），并晓谕各据点，加强警戒，严查所有可疑人员。执事EyeWatcher受命追查入侵者下落，务使此事不再重演。
+                </div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">签署与封印</div>
+                <div class="field-content">
+                    大祭司：Hermannus de Reichenau (赫尔曼·冯·赖兴瑙)<br>
+                    执事代表：EyeWatcher (代号)<br>
+                    缮写修士：Frater Lucas<br>
+                    存档印信：修道院圆形蜡封，刻有全视之眼与ΛΧ符印。
+                </div>
+            </div>
+            <div class="signature">
+                Archivum Sanctae Lucis · 此件为加密副本，仅限执事以上权限查阅<br>
+                登记于：2026年3月26日 · 圣光修道院密档室
+            </div>
+        </div>
+    </div>
+
+    <!-- 自定义输入模态框 (点击 LUX 后显示) -->
+    <div id="inputModal" class="modal">
+        <div class="input-modal-content">
+            <p>LUX</p>
+            <input type="text" id="codeInput" placeholder="" autocomplete="off">
+            <div>
+                <button id="confirmCodeBtn">确认</button>
+                <button id="closeInputModalBtn" class="close-input">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 转移指令模态框 -->
+    <div id="transferModal" class="modal">
+        <div class="paper-document">
+            <button class="close-paper" id="closeTransferModalBtn">✕</button>
+            <div class="document-header">
+                <h2>紧急转移指令</h2>
+                <div class="archive-ref">执事级 · 加密传阅</div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">发布日期</div>
+                <div class="field-content">主历 2026年 3月 26日 05:12</div>
+            </div>
+            <div class="record-field">
+                <div class="field-label">指令内容</div>
+                <div class="field-content">
+                    根据大祭司直接授意，LUX-009已由原关押地点转移至索菲亚教堂地下墓室，由执事负责看管。
+                    其余四个城市（开罗、布达佩斯、华沙、布拉格）仅作为备用据点，目前未关押任何祭品。
+                    此文件阅后即焚，严禁外传。
+                </div>
+            </div>
+            <div class="signature">
+                大祭司 · 赫尔曼·冯·赖兴瑙<br>
+                执事代表 · EyeWatcher
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('archiveKeyInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        const ritualModal = document.getElementById('ritualModal');
+        const eventModal = document.getElementById('eventModal');
+        const inputModal = document.getElementById('inputModal');
+        const transferModal = document.getElementById('transferModal');
+
+        const closeRitualBtn = document.getElementById('closeRitualModalBtn');
+        const closeEventBtn = document.getElementById('closeEventModalBtn');
+        const closeTransferBtn = document.getElementById('closeTransferModalBtn');
+        const closeInputBtn = document.getElementById('closeInputModalBtn');
+        const confirmCodeBtn = document.getElementById('confirmCodeBtn');
+        const codeInput = document.getElementById('codeInput');
+
+        const VALID_KEYS = {
+            "LUX-0720-2023": ritualModal,
+            "LUX-1147-2026": eventModal
+        };
+
+        function normalizeKey(key) {
+            return key.trim().toUpperCase();
+        }
+
+        function closeAllModals() {
+            ritualModal.classList.remove('active');
+            eventModal.classList.remove('active');
+            inputModal.classList.remove('active');
+            transferModal.classList.remove('active');
+        }
+
+        function showModal(modalElement) {
+            closeAllModals();
+            modalElement.classList.add('active');
+        }
+
+        function handleSearch() {
+            const rawKey = searchInput.value;
+            const normalized = normalizeKey(rawKey);
+            const targetModal = VALID_KEYS[normalized];
+            if (targetModal) {
+                showModal(targetModal);
+                searchInput.style.borderColor = "";
+                searchInput.style.boxShadow = "";
+            } else {
+                searchInput.style.borderColor = "#dbb88c";
+                searchInput.style.boxShadow = "0 0 0 2px rgba(219,184,140,0.2)";
+                setTimeout(() => {
+                    searchInput.style.borderColor = "#e2d8ce";
+                    searchInput.style.boxShadow = "";
+                }, 1000);
+                const hint = document.querySelector('.hint-text');
+                const original = hint.innerHTML;
+                hint.innerHTML = "无效档案密钥，请核对后重试";
+                setTimeout(() => {
+                    hint.innerHTML = original;
+                }, 2000);
+            }
+        }
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSearch();
+            }
+        });
+        searchBtn.addEventListener('click', handleSearch);
+
+        // 模态框背景关闭
+        ritualModal.addEventListener('click', (e) => {
+            if (e.target === ritualModal) ritualModal.classList.remove('active');
+        });
+        eventModal.addEventListener('click', (e) => {
+            if (e.target === eventModal) eventModal.classList.remove('active');
+        });
+        inputModal.addEventListener('click', (e) => {
+            if (e.target === inputModal) inputModal.classList.remove('active');
+        });
+        transferModal.addEventListener('click', (e) => {
+            if (e.target === transferModal) transferModal.classList.remove('active');
+        });
+
+        // 关闭按钮
+        closeRitualBtn.addEventListener('click', () => ritualModal.classList.remove('active'));
+        closeEventBtn.addEventListener('click', () => eventModal.classList.remove('active'));
+        closeTransferBtn.addEventListener('click', () => transferModal.classList.remove('active'));
+        closeInputBtn.addEventListener('click', () => inputModal.classList.remove('active'));
+
+        // 可点击 LUX 的逻辑：显示输入模态框
+        const clickableLux = document.getElementById('clickableLux');
+        if (clickableLux) {
+            clickableLux.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showModal(inputModal);
+                codeInput.value = '';
+            });
+        }
+
+        // 确认输入
+        confirmCodeBtn.addEventListener('click', () => {
+            const code = codeInput.value.trim();
+            if (code === '122124') {
+                // 向桌面主页面发送消息（如有需要）
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage('122124', '*');
+                }
+                closeAllModals();
+                showModal(transferModal);
+            } else {
+                alert('验证码错误，无法查看文件。');
+                codeInput.value = '';
+                codeInput.focus();
+            }
+        });
+
+        // 按回车键确认
+        codeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                confirmCodeBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>

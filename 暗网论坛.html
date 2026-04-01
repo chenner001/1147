@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>暗网论坛 · 内部通讯</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0505;
+            font-family: 'Courier New', 'Segoe UI', monospace;
+            color: #ddcba4;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .forum-container {
+            width: 1000px;
+            max-width: 100%;
+            background: #0c0808;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(180, 60, 50, 0.2);
+            border: 1px solid #5a2a2a;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1a0a0a;
+            padding: 12px 20px;
+            border-bottom: 1px solid #5a2a2a;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .status {
+            font-size: 0.8rem;
+            color: #b56a5a;
+        }
+
+        .login-area {
+            padding: 30px;
+            text-align: center;
+            background: #0c0808;
+        }
+        .login-box {
+            max-width: 350px;
+            margin: 0 auto;
+            background: #1a0f0f;
+            padding: 25px;
+            border-radius: 6px;
+            border: 1px solid #6a2e2e;
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #d68c6c;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: #c97e5a;
+        }
+        .input-group input {
+            width: 100%;
+            background: #0a0606;
+            border: 1px solid #6a2e2e;
+            padding: 10px;
+            color: #e0c8a0;
+            font-family: monospace;
+            border-radius: 4px;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #d68c6c;
+        }
+        .login-btn {
+            background: #3a1a1a;
+            border: none;
+            color: #e0a87a;
+            padding: 10px 20px;
+            width: 100%;
+            font-family: monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .login-btn:hover {
+            background: #6a2a2a;
+            color: white;
+        }
+        .error-msg {
+            color: #d97a5a;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .forum-main {
+            display: none;
+        }
+        .thread-list {
+            padding: 20px;
+            border-bottom: 1px solid #5a2a2a;
+        }
+        .thread-item {
+            background: #1a0f0f;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #b54a3a;
+        }
+        .thread-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e0a87a;
+            margin-bottom: 8px;
+        }
+        .thread-meta {
+            font-size: 0.7rem;
+            color: #aa7a6a;
+            margin-bottom: 10px;
+        }
+        .thread-content {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #ddcba4;
+        }
+        .comment-section {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid #4a2a2a;
+        }
+        .comment {
+            font-size: 0.8rem;
+            color: #c9a87a;
+            margin: 6px 0;
+            padding-left: 12px;
+            border-left: 2px solid #8a4a3a;
+        }
+        .comment-meta {
+            font-size: 0.65rem;
+            color: #aa6a5a;
+        }
+
+        .pm-section {
+            padding: 15px 20px 20px;
+            border-top: 1px solid #5a2a2a;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .pm-icon {
+            background: #2a1212;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #b54a3a;
+            position: relative;
+        }
+        .pm-icon:hover {
+            background: #3e1a1a;
+        }
+        .blink {
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink {
+            50% { box-shadow: 0 0 0 2px #d68c6c, 0 0 0 4px rgba(180, 90, 60, 0.3); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #1a0f0f;
+            width: 500px;
+            max-width: 90%;
+            border-radius: 8px;
+            border: 1px solid #b54a3a;
+            box-shadow: 0 0 20px rgba(180,60,50,0.3);
+        }
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #5a2a2a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            color: #e0a87a;
+            font-size: 1.1rem;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            color: #b56a5a;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 20px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .pm-text {
+            background: #0c0606;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 3px solid #b54a3a;
+        }
+        .attachment {
+            background: #2a1212;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            cursor: pointer;
+            font-family: monospace;
+            margin-top: 8px;
+            border: 1px solid #8a4a3a;
+        }
+        .attachment:hover {
+            background: #4a1e1e;
+        }
+        .input-password {
+            margin: 15px 0;
+        }
+        .input-password input {
+            width: 100%;
+            background: #0c0606;
+            border: 1px solid #6a2e2e;
+            padding: 8px;
+            color: #e0c8a0;
+            font-family: monospace;
+            border-radius: 4px;
+        }
+        .decrypt-btn {
+            background: #3a1a1a;
+            border: none;
+            color: #e0a87a;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        footer {
+            padding: 12px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6a4a3a;
+            border-top: 1px solid #4a2a2a;
+        }
+    </style>
+</head>
+<body>
+<div class="forum-container">
+    <div class="header">
+        <div class="status">加密连接 · 匿名访问</div>
+    </div>
+
+    <!-- 登录区域 -->
+    <div id="loginArea" class="login-area">
+        <div class="login-box">
+            <h2>验证身份</h2>
+            <div class="input-group">
+                <label>序列号</label>
+                <input type="text" id="serialInput" placeholder="" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>密码</label>
+                <input type="password" id="passwordInput" placeholder="" autocomplete="off">
+            </div>
+            <button id="loginBtn" class="login-btn">进入</button>
+            <div id="loginError" class="error-msg"></div>
+        </div>
+    </div>
+
+    <!-- 论坛主体（登录后显示） -->
+    <div id="forumMain" class="forum-main">
+        <div class="thread-list">
+            <!-- 原有帖子，日期改为 2026年3月26日 05:25 -->
+            <div class="thread-item">
+                <div class="thread-title">谁在打听ΛΧ计划？</div>
+                <div class="thread-meta">发帖人：EyeWatcher · 2026年3月26日 05:25</div>
+                <div class="thread-content">
+                    最近有人黑进了我们的物流系统，查到了“ΛΧ-1147”号包裹。这个包裹本来应该寄给“祭品”，却被寄给了一个调查记者林星朗。已经处理了那个记者，但他电脑里可能还有东西。<br>
+                    根据最新情报，LUX-009已被转移至开罗据点，任何人不得泄露。如果有人发现林星朗留下的任何线索，立刻上报。<br>
+                    <span style="color:#b56a5a;">—— 全视之眼会 · 执事</span>
+                </div>
+                <div class="comment-section">
+                    <div class="comment">
+                        <div class="comment-meta">DarkSeeker · 2026年3月26日 07:12</div>
+                        那个记者林星朗之前一直在调查旧教堂，看来他确实挖到了东西。开罗那边要加强戒备了。
+                    </div>
+                    <div class="comment">
+                        <div class="comment-meta">ShadowWatch · 2026年3月26日 08:44</div>
+                        已经通知开罗执事，所有可疑人员一律拦截。另外，他电脑的备份我们还在追查。
+                    </div>
+                    <div class="comment">
+                        <div class="comment-meta">EyeWatcher · 2026年3月26日 09:30</div>
+                        所有人注意，不要再公开讨论具体转移地点。此帖锁定。
+                    </div>
+                </div>
+            </div>
+            <!-- 新增帖子：关于 LUX-1147-2026，已删除第一条评论 -->
+            <div class="thread-item">
+                <div class="thread-title">档案更新：LUX-1147-2026</div>
+                <div class="thread-meta">发帖人：EyeWatcher · 2026年3月26日 11:17</div>
+                <div class="thread-content">
+                    内部档案系统已更新，新增密钥 LUX-1147-2026。此密钥用于调取3月26日的事件记录。<br>
+                    门禁密码已同步更新，所有执事请注意查收内部通讯。林星朗虽然逃脱，但并未带走关键资料，各据点维持当前警戒等级。<br>
+                    <span style="color:#b56a5a;">—— 全视之眼会 · 执事</span>
+                </div>
+                <div class="comment-section">
+                    <div class="comment">
+                        <div class="comment-meta">EyeWatcher · 2026年3月26日 12:33</div>
+                        同意。夜班加倍。
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pm-section">
+            <div id="pmIcon" class="pm-icon blink"></div>
+        </div>
+        <footer>加密通讯 · 所有操作将被记录</footer>
+    </div>
+</div>
+
+<!-- 私信模态框 -->
+<div id="pmModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>私信 · Lumen</h3>
+            <button class="close-modal" id="closePmModal">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="pm-text">
+                林星朗，我是Lumen。EyeWatcher的帖子是公开的，但他不知道我也能看到。<br>
+                真正的线索藏在我发给你的附件里。附件是一个加密图片，你需要先解码文件名，然后用解码后的数字作为密钥打开图片。<br>
+                教堂档案馆下面有个高级隐秘入口，藏在光的背面。
+            </div>
+            <div class="attachment" id="attachmentBtn">附件：MTc3NjA1MDE=</div>
+        </div>
+    </div>
+</div>
+
+<!-- 附件解密弹窗 -->
+<div id="decryptModal" class="modal">
+    <div class="modal-content" style="width: 360px;">
+        <div class="modal-header">
+            <h3>解密附件</h3>
+            <button class="close-modal" id="closeDecryptModal">✕</button>
+        </div>
+        <div class="modal-body">
+            <p>请输入密码：</p>
+            <div class="input-password">
+                <input type="password" id="decryptPassword" placeholder="密码">
+            </div>
+            <button id="doDecrypt" class="decrypt-btn">解密</button>
+        </div>
+    </div>
+</div>
+
+<!-- 解密结果独立弹窗 -->
+<div id="resultModal" class="modal">
+    <div class="modal-content" style="width: 300px;">
+        <div class="modal-header">
+            <h3>图片内容</h3>
+            <button class="close-modal" id="closeResultModal">✕</button>
+        </div>
+        <div class="modal-body" style="text-align: center; font-family: monospace; font-size: 1.1rem;">
+            <div>A=1</div>
+            <div>AB=12</div>
+            <div>LUX=？</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 登录验证
+    const loginArea = document.getElementById('loginArea');
+    const forumMain = document.getElementById('forumMain');
+    const loginBtn = document.getElementById('loginBtn');
+    const serialInput = document.getElementById('serialInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginError = document.getElementById('loginError');
+
+    const correctSerial = "GOLDEN-1147";
+    const correctPassword = "19881874";
+
+    function attemptLogin() {
+        const serial = serialInput.value.trim();
+        const pwd = passwordInput.value.trim();
+        if (serial.toUpperCase() === correctSerial.toUpperCase() && pwd === correctPassword) {
+            loginArea.style.display = 'none';
+            forumMain.style.display = 'block';
+        } else {
+            loginError.textContent = "序列号或密码错误，请重试。";
+        }
+    }
+
+    loginBtn.addEventListener('click', attemptLogin);
+    serialInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') attemptLogin();
+    });
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') attemptLogin();
+    });
+
+    // 私信模态框
+    const pmModal = document.getElementById('pmModal');
+    const pmIcon = document.getElementById('pmIcon');
+    const closePmModal = document.getElementById('closePmModal');
+
+    pmIcon.addEventListener('click', () => {
+        pmModal.style.display = 'flex';
+    });
+    closePmModal.addEventListener('click', () => {
+        pmModal.style.display = 'none';
+    });
+
+    // 附件解密流程
+    const decryptModal = document.getElementById('decryptModal');
+    const resultModal = document.getElementById('resultModal');
+    const attachmentBtn = document.getElementById('attachmentBtn');
+    const closeDecryptModal = document.getElementById('closeDecryptModal');
+    const closeResultModal = document.getElementById('closeResultModal');
+    const doDecrypt = document.getElementById('doDecrypt');
+    const decryptPassword = document.getElementById('decryptPassword');
+
+    attachmentBtn.addEventListener('click', () => {
+        pmModal.style.display = 'none';
+        decryptModal.style.display = 'flex';
+        decryptPassword.value = '';
+    });
+
+    closeDecryptModal.addEventListener('click', () => {
+        decryptModal.style.display = 'none';
+    });
+
+    doDecrypt.addEventListener('click', () => {
+        const pwd = decryptPassword.value.trim();
+        if (pwd === '17760501') {
+            decryptModal.style.display = 'none';
+            resultModal.style.display = 'flex';
+        } else {
+            alert('密码错误，无法解密。');
+        }
+    });
+
+    closeResultModal.addEventListener('click', () => {
+        resultModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === pmModal) pmModal.style.display = 'none';
+        if (e.target === decryptModal) decryptModal.style.display = 'none';
+        if (e.target === resultModal) resultModal.style.display = 'none';
+    });
+</script>
+</body>
+</html>

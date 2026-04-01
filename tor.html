@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Tor Browser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1e1b1a;
+            font-family: 'Segoe UI', 'Lucida Grande', Tahoma, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .tor-window {
+            width: 1000px;
+            height: 700px;
+            background: #2b2b2b;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #4a4a4a;
+        }
+
+        .title-bar {
+            background: #3a3a3a;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .tor-icon {
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2380b3ff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 12c-2.7 0-5-1.3-6-3.3 1.3-1.3 3-2.2 5-2.2s3.7.9 5 2.2c-1 2-3.3 3.3-6 3.3z"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+        .title-text {
+            color: #e0e0e0;
+            font-size: 13px;
+            font-weight: 500;
+            flex: 1;
+        }
+        .window-controls {
+            display: flex;
+            gap: 12px;
+        }
+        .window-controls span {
+            color: #ccc;
+            cursor: pointer;
+            font-size: 14px;
+            width: 24px;
+            text-align: center;
+        }
+        .window-controls span:hover {
+            color: white;
+        }
+
+        .toolbar {
+            background: #3a3a3a;
+            padding: 6px 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-btn {
+            background: #4a4a4a;
+            border: none;
+            color: #ccc;
+            font-size: 16px;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.6;
+            cursor: default;
+        }
+        .address-bar {
+            flex: 1;
+            display: flex;
+            background: #1e1e1e;
+            border-radius: 20px;
+            padding: 4px 12px;
+            align-items: center;
+            gap: 6px;
+        }
+        #urlInput {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #e0e0e0;
+            font-size: 13px;
+            outline: none;
+            font-family: monospace;
+        }
+        .go-btn {
+            background: #5a5a5a;
+            border: none;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .go-btn:hover {
+            background: #6a6a6a;
+        }
+
+        .content-area {
+            flex: 1;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+        .onion-tip {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        .onion-tip p {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="tor-window">
+    <div class="title-bar">
+        <div class="tor-icon"></div>
+        <div class="title-text">Tor Browser</div>
+        <div class="window-controls">
+            <span>—</span>
+            <span>□</span>
+            <span>✕</span>
+        </div>
+    </div>
+    <div class="toolbar">
+        <div class="nav-buttons">
+            <button class="nav-btn" disabled>←</button>
+            <button class="nav-btn" disabled>→</button>
+            <button class="nav-btn" disabled>↻</button>
+        </div>
+        <div class="address-bar">
+            <input type="text" id="urlInput" value="" placeholder="输入地址" spellcheck="false">
+            <button class="go-btn" id="goBtn">前往</button>
+        </div>
+    </div>
+    <div class="content-area">
+        <div class="onion-tip">
+            <p>已连接到 Tor 网络</p>
+            <p>在地址栏输入地址以访问站点</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlInput = document.getElementById('urlInput');
+    const goBtn = document.getElementById('goBtn');
+    const TARGET_PAGE = '暗网论坛.html';
+
+    function navigateTo(url) {
+        if (url === 'http://darkwebforum.onion/viewthread?tid=ΛΧ') {
+            window.location.href = TARGET_PAGE;
+        } else {
+            alert('演示模式：仅支持跳转到指定暗网地址的模拟。');
+        }
+    }
+
+    function handleGo() {
+        let rawUrl = urlInput.value.trim();
+        navigateTo(rawUrl);
+    }
+
+    urlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleGo();
+        }
+    });
+    goBtn.addEventListener('click', handleGo);
+</script>
+</body>
+</html>

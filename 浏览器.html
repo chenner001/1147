@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Internet Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #5a6e5a;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Lucida Grande', Tahoma, sans-serif;
+        }
+
+        .ie-window {
+            width: 100vw;
+            height: 100vh;
+            background: #ece9d8;
+            border: 2px solid #0a246a;
+            border-radius: 8px 8px 4px 4px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .title-bar {
+            background: linear-gradient(90deg, #0a246a, #3a6ea5);
+            color: white;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .title-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .title-text img {
+            width: 18px;
+            height: 18px;
+        }
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+        .window-controls span {
+            display: inline-block;
+            width: 24px;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .window-controls span:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        .menu-bar {
+            background: #f0f0e8;
+            border-bottom: 1px solid #a0a0a0;
+            padding: 2px 8px;
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .menu-item {
+            cursor: pointer;
+            padding: 2px 4px;
+        }
+        .menu-item:hover {
+            background: #0a246a;
+            color: white;
+        }
+
+        .toolbar {
+            background: #f0f0e8;
+            padding: 6px 8px;
+            border-bottom: 1px solid #a0a0a0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-btn {
+            background: #e0dfd7;
+            border: 1px solid #a0a0a0;
+            padding: 2px 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .address-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #7f9db9;
+            border-radius: 2px;
+            padding: 2px 4px;
+        }
+        .address-bar span {
+            background: #e0dfd7;
+            padding: 2px 6px;
+            font-size: 12px;
+            border-right: 1px solid #aaa;
+            margin-right: 4px;
+        }
+        #addressInput {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 13px;
+            background: transparent;
+        }
+        .history-btn {
+            background: #e0dfd7;
+            border: 1px solid #a0a0a0;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .history-btn:hover {
+            background: #c0c0b0;
+        }
+
+        .history-dropdown {
+            position: absolute;
+            top: 120px;
+            right: 20px;
+            width: 300px;
+            background: #f9f9f0;
+            border: 1px solid #0a246a;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: none;
+            border-radius: 4px;
+        }
+        .history-header {
+            background: #d4d0c8;
+            padding: 6px 10px;
+            font-weight: bold;
+            border-bottom: 1px solid #aaa;
+        }
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .history-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .history-item:hover {
+            background: #e0e0d0;
+        }
+        .history-item .url {
+            color: #0a246a;
+            font-size: 11px;
+            word-break: break-all;
+            margin-top: 2px;
+        }
+
+        .content-area {
+            flex: 1;
+            background: white;
+            overflow-y: auto;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .search-engine {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 400px;
+        }
+        .search-logo {
+            font-size: 72px;
+            font-weight: bold;
+            color: #0a246a;
+            margin-bottom: 30px;
+            letter-spacing: 4px;
+        }
+        .search-box {
+            width: 500px;
+            max-width: 80%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 24px;
+            outline: none;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        .search-box:focus {
+            border-color: #0a246a;
+        }
+        .search-buttons {
+            margin-top: 20px;
+        }
+        .search-btn {
+            background: #f0f0e8;
+            border: 1px solid #a0a0a0;
+            padding: 8px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        .search-btn:hover {
+            background: #e0dfd7;
+        }
+
+        .forum-post {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fefefe;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .post-header {
+            border-bottom: 2px solid #0a246a;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+        .post-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0a246a;
+        }
+        .post-meta {
+            color: #555;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+        .post-author {
+            font-weight: bold;
+            color: #0a246a;
+        }
+        .post-content {
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 20px 0;
+            background: #fafaf5;
+            padding: 16px;
+            border-left: 4px solid #0a246a;
+        }
+        .cache-notice {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+        hr {
+            margin: 20px 0;
+        }
+        .reply-section {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 16px;
+            font-size: 13px;
+        }
+        .reply-item {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .reply-author {
+            font-weight: bold;
+            color: #0a246a;
+        }
+        .reply-content {
+            margin-top: 4px;
+            color: #333;
+        }
+
+        .ie-icon {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 12c-2.7 0-5-1.3-6-3.3 1.3-1.3 3-2.2 5-2.2s3.7.9 5 2.2c-1 2-3.3 3.3-6 3.3z"/></svg>') no-repeat center;
+            background-size: contain;
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+<div class="ie-window">
+    <div class="title-bar">
+        <div class="title-text">
+            <div class="ie-icon"></div>
+            <span>Internet Explorer</span>
+        </div>
+        <div class="window-controls">
+            <span>—</span>
+            <span>□</span>
+            <span>✕</span>
+        </div>
+    </div>
+    <div class="menu-bar">
+        <div class="menu-item">文件(F)</div>
+        <div class="menu-item">编辑(E)</div>
+        <div class="menu-item">查看(V)</div>
+        <div class="menu-item">收藏夹(A)</div>
+        <div class="menu-item">工具(T)</div>
+        <div class="menu-item">帮助(H)</div>
+    </div>
+    <div class="toolbar">
+        <div class="nav-buttons">
+            <div class="nav-btn" id="backBtn" style="background:#c0c0b0;">←</div>
+            <div class="nav-btn" id="forwardBtn" style="background:#c0c0b0;">→</div>
+        </div>
+        <div class="address-bar">
+            <span>地址</span>
+            <input type="text" id="addressInput" value="https://www.search.com/" readonly>
+        </div>
+        <div class="history-btn" id="historyBtn">
+            历史
+        </div>
+    </div>
+
+    <!-- 历史下拉面板 -->
+    <div id="historyDropdown" class="history-dropdown">
+        <div class="history-header">浏览历史</div>
+        <div class="history-list" id="historyList">
+            <div class="history-item" data-url="http://darkwebforum.onion/viewthread?tid=ΛΧ" data-type="cache">
+                <div>暗网论坛 · ΛΧ计划（本地缓存）</div>
+                <div class="url">http://darkwebforum.onion/viewthread?tid=ΛΧ</div>
+                <div style="font-size:10px; color:#856404;">⚠️ 无法访问，显示缓存页面</div>
+            </div>
+            <div class="history-item" data-url="教堂官网.html" data-type="external">
+                <div>索菲亚教堂官网</div>
+                <div class="url">https://www.sophia-cathedral.com</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-area" id="contentArea">
+        <div class="search-engine">
+            <div class="search-logo">Search</div>
+            <input type="text" class="search-box" placeholder="输入关键词...">
+            <div class="search-buttons">
+                <button class="search-btn">搜索</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 缓存帖子内容（含评论，日期2026年3月25日，无锁图标）
+    const cachedPostHTML = `
+        <div class="forum-post">
+            <div class="cache-notice">
+                ⚠️ 无法访问原始页面 http://darkwebforum.onion/viewthread?tid=ΛΧ<br>
+                正在显示本地缓存版本（保存于 2026年3月25日 15:32）
+            </div>
+            <div class="post-header">
+                <div class="post-title">谁在打听ΛΧ计划？</div>
+                <div class="post-meta">
+                    <span class="post-author">发帖人：EyeWatcher</span> · 
+                    <span>2026年3月25日 22:17</span> · 
+                    <span>阅读 1472 次</span>
+                </div>
+            </div>
+            <div class="post-content">
+                <p>最近有人黑进了我们的物流系统，查到了“ΛΧ-1147”号包裹。这个包裹本来应该寄给“祭品”，却被寄给了一个调查记者。已经处理了那个记者，但他电脑里可能还有东西。</p>
+                <p style="margin-top: 12px;">如果有人发现他留下的任何线索，立刻上报。</p>
+                <p style="margin-top: 12px; font-size: 12px; color: #777;">—— 全视之眼会 · 执事</p>
+            </div>
+            <div class="reply-section">
+                <strong>回复 (3)</strong>
+                <div class="reply-item">
+                    <span class="reply-author">DarkSeeker:</span>
+                    <div class="reply-content">那个记者叫林星朗？查到他在调查旧教堂。</div>
+                </div>
+                <div class="reply-item">
+                    <span class="reply-author">ShadowWatch:</span>
+                    <div class="reply-content">清除痕迹，别留尾巴。</div>
+                </div>
+                <div class="reply-item">
+                    <span class="reply-author">EyeWatcher:</span>
+                    <div class="reply-content">已处理，但他云电脑可能还有备份，继续监视。</div>
+                </div>
+            </div>
+            <div style="margin-top: 16px; text-align: right; font-size: 11px;">
+                <span>加密通道 | 本地缓存 ID: 0x7F3A2B</span>
+            </div>
+        </div>
+    `;
+
+    // 元素
+    const historyBtn = document.getElementById('historyBtn');
+    const historyDropdown = document.getElementById('historyDropdown');
+    const contentArea = document.getElementById('contentArea');
+    const addressInput = document.getElementById('addressInput');
+    const backBtn = document.getElementById('backBtn');
+    const forwardBtn = document.getElementById('forwardBtn');
+
+    let historyStack = [];
+    let currentIndex = -1;
+    const SEARCH_PAGE_ID = "search_engine";
+    const CACHE_PAGE_ID = "cache_page";
+
+    function showSearchEngine() {
+        contentArea.innerHTML = `
+            <div class="search-engine">
+                <div class="search-logo">Search</div>
+                <input type="text" class="search-box" placeholder="输入关键词...">
+                <div class="search-buttons">
+                    <button class="search-btn">搜索</button>
+                </div>
+            </div>
+        `;
+        addressInput.value = "https://www.search.com/";
+    }
+
+    function showCachePage() {
+        contentArea.innerHTML = cachedPostHTML;
+        addressInput.value = "http://darkwebforum.onion/viewthread?tid=ΛΧ";
+    }
+
+    function pushHistory(stateId) {
+        if (historyStack[currentIndex] === stateId) return;
+        historyStack = historyStack.slice(0, currentIndex + 1);
+        historyStack.push(stateId);
+        currentIndex++;
+        updateNavButtons();
+    }
+
+    function updateNavButtons() {
+        backBtn.style.background = currentIndex > 0 ? "#e0dfd7" : "#c0c0b0";
+        forwardBtn.style.background = currentIndex < historyStack.length - 1 ? "#e0dfd7" : "#c0c0b0";
+    }
+
+    function goBack() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            const state = historyStack[currentIndex];
+            if (state === SEARCH_PAGE_ID) showSearchEngine();
+            else if (state === CACHE_PAGE_ID) showCachePage();
+            updateNavButtons();
+        }
+    }
+
+    function goForward() {
+        if (currentIndex < historyStack.length - 1) {
+            currentIndex++;
+            const state = historyStack[currentIndex];
+            if (state === SEARCH_PAGE_ID) showSearchEngine();
+            else if (state === CACHE_PAGE_ID) showCachePage();
+            updateNavButtons();
+        }
+    }
+
+    // 历史点击处理
+    function handleHistoryClick(item) {
+        const url = item.getAttribute('data-url');
+        const type = item.getAttribute('data-type');
+        if (type === 'cache') {
+            if (contentArea.innerHTML !== cachedPostHTML) {
+                showCachePage();
+                pushHistory(CACHE_PAGE_ID);
+            }
+            historyDropdown.style.display = 'none';
+        } else if (type === 'external') {
+            // 使用 data-url 中存储的实际路径（教堂官网.html）打开
+            window.open(url, '_blank');
+            historyDropdown.style.display = 'none';
+        }
+    }
+
+    // 绑定历史项事件
+    function bindHistoryItems() {
+        const items = document.querySelectorAll('.history-item');
+        items.forEach(item => {
+            item.removeEventListener('click', historyClickHandler);
+            item.addEventListener('click', historyClickHandler);
+        });
+    }
+
+    function historyClickHandler(e) {
+        e.stopPropagation();
+        handleHistoryClick(this);
+    }
+
+    // 显示/隐藏历史下拉
+    historyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        historyDropdown.style.display = historyDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!historyDropdown.contains(e.target) && e.target !== historyBtn && !historyBtn.contains(e.target)) {
+            historyDropdown.style.display = 'none';
+        }
+    });
+
+    backBtn.addEventListener('click', goBack);
+    forwardBtn.addEventListener('click', goForward);
+
+    // 初始化
+    historyStack = [SEARCH_PAGE_ID];
+    currentIndex = 0;
+    showSearchEngine();
+    updateNavButtons();
+    bindHistoryItems();
+
+    // 搜索按钮无弹窗
+    document.addEventListener('click', function(e) {
+        if (e.target.classList && e.target.classList.contains('search-btn')) {
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>
