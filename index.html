@@ -1,1 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>新的包裹</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            background: #0a0c12;
+            font-family: 'Courier New', 'SF Mono', 'Segoe UI', monospace;
+            color: #d9d9dd;
+            line-height: 1.65;
+            padding: 2rem 1.5rem 3rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: auto;
+            transition: background 0.6s ease;
+        }
+
+        body.white-canvas-active {
+            background: #fefcf8;
+        }
+
+        .mystery-container {
+            max-width: 820px;
+            width: 100%;
+            background: #111317;
+            border: 1px solid #2a2e3a;
+            border-radius: 24px;
+            padding: 2rem 2rem 2.2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            position: relative;
+            transition: all 0.6s ease;
+        }
+
+        .mystery-container.light-mode {
+            background: #fefcf8;
+            border-color: #ddd6cc;
+            color: #1e1b16;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+        }
+
+        .mystery-container.light-mode .cipher {
+            background: #e9e2d4;
+            color: #b45f2b;
+        }
+
+        /* 右上角按钮 */
+        .author-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(20, 22, 30, 0.7);
+            backdrop-filter: blur(4px);
+            border: 1px solid #3a3f4e;
+            color: #cac7b6;
+            font-family: inherit;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+            letter-spacing: 0.3px;
+            font-weight: 400;
+        }
+        .author-btn:hover {
+            background: rgba(60, 65, 80, 0.8);
+            border-color: #b7a35c;
+            color: #ede8c4;
+        }
+        .mystery-container.light-mode .author-btn {
+            background: rgba(240, 235, 225, 0.8);
+            border-color: #cbc2b5;
+            color: #4c4238;
+        }
+        .mystery-container.light-mode .author-btn:hover {
+            background: #e5dacb;
+            border-color: #b39b6e;
+            color: #2c241c;
+        }
+
+        .evidence-image {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #07090e;
+            padding: 0.5rem;
+            border: 1px solid #2a2f3a;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
+            transition: all 0.6s ease;
+        }
+
+        .mystery-container.light-mode .evidence-image {
+            background: #f0ede8;
+            border-color: #ccc3b8;
+        }
+
+        /* 图片缩小 1/2 居中 */
+        .evidence-image img {
+            display: block;
+            width: 50%;
+            height: auto;
+            object-fit: cover;
+            margin: 0 auto;
+        }
+
+        .story-text {
+            margin: 1.8rem 0 2rem;
+            font-size: 0.98rem;
+            letter-spacing: 0.01em;
+            word-break: break-word;
+            user-select: text;
+        }
+
+        .story-text p {
+            margin-bottom: 1.35rem;
+            text-align: justify;
+        }
+
+        .cipher {
+            font-family: monospace;
+            background: #1e212b;
+            padding: 0.1rem 0.3rem;
+            border-radius: 8px;
+            color: #e6cd8c;
+            font-weight: 500;
+        }
+
+        .search-zone {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .secret-input {
+            background: #010101;
+            border: 1.5px solid #3a3f4e;
+            border-radius: 48px;
+            padding: 0.9rem 1.8rem;
+            width: 85%;
+            max-width: 380px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #f0f0f0;
+            caret-color: #b8a45c;
+            outline: none;
+            transition: all 0.25s;
+            background-color: #0b0d12;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            -webkit-touch-callout: default !important;
+        }
+
+        .secret-input::placeholder {
+            color: transparent;
+        }
+
+        .secret-input:focus {
+            border-color: #7e6b3c;
+            box-shadow: 0 0 6px rgba(200, 170, 80, 0.3);
+            background-color: #0f1119;
+        }
+
+        .mystery-container.light-mode .secret-input {
+            background: #fffef7;
+            border-color: #cdc3b6;
+            color: #2a241d;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .error-feedback {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #d97a54;
+            margin-top: 0.7rem;
+            height: 28px;
+            font-family: monospace;
+            opacity: 0;
+            transition: opacity 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .error-feedback.show {
+            opacity: 1;
+        }
+
+        .white-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s cubic-bezier(0.23, 1, 0.32, 1), visibility 0s 2s;
+            flex-direction: column;
+        }
+
+        .white-canvas.active {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 2s cubic-bezier(0.23, 1, 0.32, 1), visibility 0s 0s;
+        }
+
+        .black-message {
+            text-align: center;
+            font-family: 'Share Tech Mono', 'Fira Code', 'Courier New', monospace;
+            opacity: 0;
+            transform: scale(0.94);
+            transition: opacity 2s cubic-bezier(0.2, 0.9, 0.3, 1.1), transform 2s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+            pointer-events: none;
+            background: transparent;
+            max-width: 90%;
+        }
+
+        .black-message.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .black-message p {
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #1a1a1a;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0.3rem 0;
+            box-shadow: none;
+            backdrop-filter: none;
+            text-shadow: none;
+            line-height: 1.4;
+        }
+
+        .black-message p:first-child {
+            margin-bottom: 0.2rem;
+        }
+
+        /* 作者的话模态框 */
+        .author-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+        }
+        .author-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .author-card {
+            max-width: 480px;
+            width: 90%;
+            background: #1a1c24;
+            border: 1px solid #4a4f5e;
+            border-radius: 24px;
+            padding: 1.8rem 1.8rem 1.6rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            font-family: monospace;
+            color: #e2dccd;
+            position: relative;
+            animation: fadeInUp 0.3s ease-out;
+        }
+        .mystery-container.light-mode .author-card {
+            background: #fefcf5;
+            border-color: #cfc5b8;
+            color: #2d2a24;
+        }
+        .author-card h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            border-left: 3px solid #b8a45c;
+            padding-left: 0.8rem;
+            letter-spacing: 1px;
+        }
+        .author-card p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            white-space: pre-line;
+        }
+        .author-card .close-author {
+            position: absolute;
+            top: 1rem;
+            right: 1.2rem;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #aa9f87;
+            transition: 0.2s;
+        }
+        .author-card .close-author:hover {
+            color: #e0b86e;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mystery-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border-radius: 24px;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,210,0.02), transparent 70%);
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .story-text p:first-child::first-letter {
+            font-size: 1.1em;
+            color: #c9aa5f;
+        }
+        body, .mystery-container, .story-text, p, div, span {
+            user-select: text;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mystery-container">
+    <!-- 右上角作者按钮 -->
+    <button class="author-btn" id="authorBtn">作者的话</button>
+
+    <div class="evidence-image">
+        <img src="kuaididan.jpg" alt="" onerror="this.style.opacity='0.7'; this.style.filter='grayscale(0.6)';">
+    </div>
+
+    <div class="story-text">
+        <p>2026年3月29日。</p>
+        <p>你拆开发小林星朗寄来的包裹，里面只有一张皱巴巴的快递单和一把钥匙。</p>
+        <p>单号栏印着“<span class="cipher">ΛΧ-1147</span>”。</p>
+        <p>他已经失联三天。最后一条微信停在三天前：“如果三天后我没再联系你，请启动我的电脑。”你当时回了三个问号，再没有等来回复。</p>
+        <p>快递单的寄件人信息被一整块黑色墨迹涂死了。你对着光看，墨层厚实均匀，像是被人一笔一笔、郑重地涂上去的。你试着在各大物流平台查询这个单号，结果全是“查无此单”。这张单所记录的那个包裹，仿佛从未在这个世界上存在过。</p>
+        <p>你攥着那张皱巴巴的纸，站在他小区楼下。楼道灯坏了两盏，你踩着忽明忽暗的台阶上到六楼。用包裹里的钥匙打开了他的家门，门开后，房间里整洁得不正常——以林星朗的性格，这种刻意的整洁本身就是一种信号。</p>
+        <p>电脑就在桌上，屏幕亮着，只有一个输入框。</p>
+        <p>你没有犹豫太久。你的直觉告诉你，桌面上最突兀的东西往往就是答案——那串“<span class="cipher">ΛΧ-1147</span>”和这张快递单，他费了这么大周折送到你手里，不会只是为了让你看一眼。</p>
+        <p>你把那串单号敲了进去。</p>
+        <p>回车。</p>
+        <p>那张快递单从来就不是什么被涂黑的单据——它就是第二把钥匙。而你刚刚转动了它。</p>
+    </div>
+
+    <div class="search-zone">
+        <input type="text" id="cipherInput" class="secret-input" spellcheck="false" autocomplete="on" aria-label="密钥输入区">
+    </div>
+    <div id="errorMsg" class="error-feedback"></div>
+</div>
+
+<div id="whiteCanvas" class="white-canvas">
+    <div id="blackMessage" class="black-message">
+        <p>验证通过</p>
+        <p>倒计时开始</p>
+    </div>
+</div>
+
+<!-- 作者的话模态框 -->
+<div id="authorModal" class="author-modal">
+    <div class="author-card">
+        <button class="close-author" id="closeAuthorModal">&times;</button>
+        <h3>作者的话</h3>
+        <p>Tips：本游戏不需要浏览器搜索栏<br>
+        某些地方需要鼠标选中不放按ctrl+c <br>
+        推荐电脑游玩，手机应该会很麻烦</p>
+        <p>1.谢谢你们玩我的游戏<br>
+        2.这是我做的第二个游戏，还有很多不足<br>
+        3.感谢各位老师和朋友的测评<br>
+        4.有任何问题或者建议可以小红书联系我@Romonosovp<br>
+        5.本来这个故事想做上下两部的 待定</p>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const SECRET_CODE = "ΛΧ-1147";
+        let isVerified = false;
+        let attemptsLeft = 3;
+        
+        let fadeTimer = null;
+        let wordAnimationTimer = null;
+        let errorHideTimer = null;
+        
+        const inputField = document.getElementById('cipherInput');
+        const errorDiv = document.getElementById('errorMsg');
+        const whiteCanvas = document.getElementById('whiteCanvas');
+        const messageContainer = document.getElementById('blackMessage');
+        const container = document.querySelector('.mystery-container');
+        const bodyEl = document.body;
+
+        // 作者模态框相关
+        const authorBtn = document.getElementById('authorBtn');
+        const authorModal = document.getElementById('authorModal');
+        const closeAuthorBtn = document.getElementById('closeAuthorModal');
+        
+        function openAuthorModal(e) {
+            e.stopPropagation();
+            authorModal.classList.add('active');
+        }
+        function closeAuthorModalFn() {
+            authorModal.classList.remove('active');
+        }
+        
+        authorBtn.addEventListener('click', openAuthorModal);
+        closeAuthorBtn.addEventListener('click', closeAuthorModalFn);
+        authorModal.addEventListener('click', function(e) {
+            if (e.target === authorModal) closeAuthorModalFn();
+        });
+        
+        function clearAllTimeouts() {
+            if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
+            if (wordAnimationTimer) { clearTimeout(wordAnimationTimer); wordAnimationTimer = null; }
+            if (errorHideTimer) { clearTimeout(errorHideTimer); errorHideTimer = null; }
+        }
+        
+        function showErrorRemaining() {
+            if (errorHideTimer) clearTimeout(errorHideTimer);
+            let message = "";
+            if (attemptsLeft === 1) {
+                message = "还可尝试 1 次";
+            } else {
+                message = `还可尝试 ${attemptsLeft} 次`;
+            }
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            errorHideTimer = setTimeout(() => {
+                errorDiv.classList.remove('show');
+            }, 2000);
+        }
+        
+        function handleWrongInput() {
+            if (isVerified) return;
+            if (attemptsLeft > 1) {
+                attemptsLeft--;
+            } else {
+                attemptsLeft = 1;
+            }
+            showErrorRemaining();
+            if (inputField) {
+                inputField.style.animation = 'shake 0.2s ease-in-out';
+                inputField.style.borderColor = '#d97a54';
+                setTimeout(() => {
+                    if (inputField) {
+                        inputField.style.borderColor = '';
+                        inputField.style.animation = '';
+                    }
+                }, 400);
+            }
+        }
+        
+        function resetVisualsBeforeUnlock() {
+            whiteCanvas.classList.remove('active');
+            messageContainer.classList.remove('show');
+            messageContainer.style.opacity = '';
+            messageContainer.style.transform = '';
+            container.classList.remove('light-mode');
+            bodyEl.classList.remove('white-canvas-active');
+        }
+        
+        function triggerUnlock() {
+            if (isVerified) return;
+            isVerified = true;
+            
+            if (inputField) {
+                inputField.disabled = true;
+                inputField.style.opacity = '0.6';
+                inputField.style.cursor = 'default';
+            }
+            
+            clearAllTimeouts();
+            resetVisualsBeforeUnlock();
+            void whiteCanvas.offsetHeight;
+            
+            whiteCanvas.classList.add('active');
+            container.classList.add('light-mode');
+            bodyEl.classList.add('white-canvas-active');
+            
+            fadeTimer = setTimeout(() => {
+                messageContainer.classList.add('show');
+                wordAnimationTimer = setTimeout(() => {
+                    window.location.href = "桌面.html";
+                }, 2000);
+            }, 2000);
+        }
+        
+        function verifyCode(inputValue) {
+            if (isVerified) return false;
+            const trimmed = inputValue.trim();
+            if (trimmed === SECRET_CODE) {
+                triggerUnlock();
+                return true;
+            } else {
+                handleWrongInput();
+                return false;
+            }
+        }
+        
+        if (inputField) {
+            inputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (isVerified) return;
+                    verifyCode(inputField.value);
+                }
+            });
+        }
+        
+        window.addEventListener('beforeunload', function() {
+            clearAllTimeouts();
+        });
+        
+        const imgElement = document.querySelector('.evidence-image img');
+        if (imgElement) {
+            imgElement.onerror = function() {
+                this.style.opacity = '0.7';
+                this.style.filter = 'grayscale(0.6)';
+                this.alt = '';
+            };
+        }
+        
+        errorDiv.textContent = '';
+        errorDiv.classList.remove('show');
+        
+        if (inputField && inputField.hasAttribute('placeholder')) {
+            inputField.removeAttribute('placeholder');
+        }
+        
+        resetVisualsBeforeUnlock();
+    })();
+</script>
+</body>
+</html>
